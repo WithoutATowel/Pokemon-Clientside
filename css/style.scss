@@ -1,0 +1,17 @@
+$edgeLength: 20px;
+
+#screen {
+    display: grid;
+    grid-template-rows: repeat(9, $edgeLength);
+    grid-template-columns: repeat(9, $edgeLength);
+    width: 9 * $edgeLength;
+    background-color: gray;
+}
+
+#player {
+    grid-column: 5 / auto; 
+    grid-row: 5 / auto;
+    background: url(../img/ash-sprite.png);
+    background-repeat: no-repeat;
+}
+
