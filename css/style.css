@@ -1,14 +1,117 @@
+@font-face {
+  font-family: "nintender";
+  src: url("fonts/nintender.ttf"); }
+@font-face {
+  font-family: "quantifier";
+  src: url("fonts/quantifier.ttf"); }
+html, body {
+  margin: 0;
+  padding: 0;
+  color: DarkBlue; }
+
+.container {
+  display: grid;
+  grid-template-rows: 15% 85%;
+  height: 100vh; }
+
+.row-1 {
+  background: #c8c8c8; }
+
+.row-2 {
+  background: gainsboro;
+  display: grid;
+  grid-template-columns: 20% 60% 20%; }
+
+.col-2-1 {
+  background: #969696; }
+
+.col-2-2 {
+  background: #828282;
+  display: grid;
+  grid-template-rows: 80% 20%; }
+
+.col-2-3 {
+  background: #aaaaaa; }
+
+.row-2-2-1 {
+  background: #464646;
+  display: grid;
+  grid-template-columns: 15% 70% 15%; }
+
+.row-2-2-2 {
+  background: #5a5a5a; }
+
+.col-2-2-1-1 {
+  background: #6e6e6e; }
+
+.col-2-2-1-2 {
+  background: #828282;
+  justify-content: center;
+  align-items: center;
+  position: relative; }
+
+.col-2-2-1-3 {
+  background: #969696; }
+
+.pill-button {
+  display: block;
+  width: 50px;
+  height: 10px;
+  border-radius: 30px; }
+
+#select, #start {
+  display: inline-block;
+  transform: rotate(-20deg);
+  text-align: center;
+  font-family: quantifier; }
+
+#b-box, #a-box {
+  display: inline-block;
+  text-align: center;
+  font-family: quantifier;
+  margin-left: 20px; }
+
+.round-button {
+  width: 100px;
+  height: 100px;
+  border-radius: 50px;
+  background: #96245d; }
+
+#a-b-button-box {
+  transform: rotate(-20deg); }
+
+.pad-square {
+  background-color: black; }
+
+#d-pad {
+  display: grid;
+  grid-template: repeat(3, 1fr)/repeat(3, 1fr);
+  width: 100px;
+  height: 100px; }
+
 #screen {
   display: grid;
-  grid-template-rows: repeat(9, 20px);
-  grid-template-columns: repeat(9, 20px);
-  width: 180px;
-  background-color: gray; }
+  grid-template-rows: repeat(9, 7vmin);
+  grid-template-columns: repeat(9, 7vmin);
+  width: 63vmin;
+  background-color: black;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); }
 
 #player {
   grid-column: 5 / auto;
   grid-row: 5 / auto;
   background: url(../img/ash-sprite.png);
   background-repeat: no-repeat; }
+
+#nintendo {
+  font-family: nintender; }
+
+#game-boy {
+  font-family: Lato;
+  text-transform: uppercase;
+  font-style: italic; }
 
 /*# sourceMappingURL=style.css.map */
