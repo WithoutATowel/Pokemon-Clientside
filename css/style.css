@@ -7,57 +7,51 @@
 html, body {
   margin: 0;
   padding: 0;
-  color: DarkBlue; }
+  background: #d0cfcb;
+  color: #032760;
+  text-align: center; }
+
+p {
+  margin: 10px 0 0 0; }
+
+.vertical-center {
+  position: absolute;
+  top: 40%;
+  transform: translateY(-50%); }
 
 .container {
   display: grid;
   grid-template-rows: 15% 85%;
   height: 100vh; }
 
-.row-1 {
-  background: #c8c8c8; }
-
 .row-2 {
-  background: gainsboro;
   display: grid;
   grid-template-columns: 20% 60% 20%; }
 
 .col-2-1 {
-  background: #969696; }
+  position: relative; }
 
 .col-2-2 {
-  background: #828282;
   display: grid;
   grid-template-rows: 80% 20%; }
 
-.col-2-3 {
-  background: #aaaaaa; }
-
 .row-2-2-1 {
-  background: #464646;
+  background: #505260;
   display: grid;
-  grid-template-columns: 15% 70% 15%; }
-
-.row-2-2-2 {
-  background: #5a5a5a; }
-
-.col-2-2-1-1 {
-  background: #6e6e6e; }
+  grid-template-columns: 15% 70% 15%;
+  border-radius: 15px 15px 75px  15px; }
 
 .col-2-2-1-2 {
-  background: #828282;
   justify-content: center;
   align-items: center;
   position: relative; }
 
-.col-2-2-1-3 {
-  background: #969696; }
-
 .pill-button {
   display: block;
-  width: 50px;
-  height: 10px;
-  border-radius: 30px; }
+  width: 65px;
+  height: 15px;
+  border-radius: 30px;
+  background: #585858; }
 
 #select, #start {
   display: inline-block;
@@ -65,11 +59,17 @@ html, body {
   text-align: center;
   font-family: quantifier; }
 
+#start {
+  margin-left: 10px; }
+
 #b-box, #a-box {
   display: inline-block;
   text-align: center;
   font-family: quantifier;
   margin-left: 20px; }
+
+#b-box {
+  margin-left: 25px; }
 
 .round-button {
   width: 100px;
@@ -78,7 +78,8 @@ html, body {
   background: #96245d; }
 
 #a-b-button-box {
-  transform: rotate(-20deg); }
+  transform: rotate(-20deg);
+  font-size: 2em; }
 
 .pad-square {
   background-color: black; }
@@ -86,14 +87,20 @@ html, body {
 #d-pad {
   display: grid;
   grid-template: repeat(3, 1fr)/repeat(3, 1fr);
-  width: 100px;
-  height: 100px; }
+  width: 150px;
+  height: 150px;
+  margin: 0 auto 40px; }
+
+#d-pad-and-start-select-box {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%); }
 
 #screen {
-  display: grid;
-  grid-template-rows: repeat(9, 7vmin);
-  grid-template-columns: repeat(9, 7vmin);
-  width: 63vmin;
+  display: flex;
+  width: 31.5vw;
+  height: 31.5vw;
   background-color: black;
   position: absolute;
   top: 50%;
@@ -101,17 +108,32 @@ html, body {
   transform: translate(-50%, -50%); }
 
 #player {
-  grid-column: 5 / auto;
-  grid-row: 5 / auto;
+  width: 3.5vw;
+  height: 3.5vw;
   background: url(../img/ash-sprite.png);
-  background-repeat: no-repeat; }
+  image-rendering: pixelated;
+  background-repeat: no-repeat !important;
+  background-position: 0% 0%;
+  background-size: 400% !important;
+  position: absolute;
+  top: 44.4444444444%;
+  left: 44.4444444444%;
+  transition: top 0.5s linear, left 0.5s linear; }
 
 #nintendo {
-  font-family: nintender; }
+  font-family: nintender;
+  font-size: 2em; }
 
 #game-boy {
   font-family: Lato;
   text-transform: uppercase;
-  font-style: italic; }
+  font-style: italic;
+  font-size: 2em; }
+
+#off-on {
+  display: inline-block;
+  font-family: sans-serif;
+  border-radius: 10px;
+  margin: 5px 85% 0 5%; }
 
 /*# sourceMappingURL=style.css.map */
