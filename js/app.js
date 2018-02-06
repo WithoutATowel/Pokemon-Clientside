@@ -108,25 +108,65 @@ function animatePlayer() {
     } 
 }
 
+function buttonPress(button) {
+    console.log(button, "was pressed");
+}
+
 $(document).ready(function() {
     $(document).on("keydown", function(event) {
         switch (event.keyCode) {
             case 37:
-                playerDirection = "left";
+                //left arrow
+                movePlayer("left");
+                break;
+            case 65:
+                //"a" button
+                movePlayer("left");
                 break;
             case 38:
-                playerDirection = "up";
+                //up arrow
+                movePlayer("up");
+                break;
+            case 87:
+                //"w" button
+                movePlayer("up");
                 break;
             case 39:
-                playerDirection = "right";
+                //right arrow
+                movePlayer("right");
+                break;
+            case 68:
+                //"d" button
+                movePlayer("right");
                 break;
             case 40:
-                playerDirection = "down";
+                //down arrow
+                movePlayer("down");
+                break;
+            case 83:
+                //"s" button
+                movePlayer("down");
+                break;
+            case 75:
+                //"k" button
+                buttonPress("B");
+                break;
+            case 76:
+                //"l" button
+                buttonPress("A");
+                break;
+            case 71:
+                //"g" button
+                buttonPress("select");
+                break;
+            case 72:
+                //"h" button
+                buttonPress("start");
                 break;
             default:
         };
-        movePlayer(playerDirection);
     });
+    //Need to only trigger this if a move key was hit... right now it fires for any key
     $(document).on("keyup", function() {
         playerState = "standing";
         animatePlayer();
