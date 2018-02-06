@@ -1,7 +1,8 @@
-var yPos = 6;
-var xPos = 5;
-var playerDirection = "";
+var squareSize = 2.5;
+var playerY = 6; //map y = ((5 - playerY) * squareSize) + "vw";
+var playerX = 5; //map x = ((5 - playerX) * squareSize) + "vw";
 var playerState = "standing";
+var playerDirection = "down";
 var walkingInterval = null;
 var moving = false;
 var token = 0;
@@ -13,47 +14,50 @@ function movePlayer(direction) {
         var targetSquare = null;
         switch (direction) {
             case "up":
-                targetSquare = mapLocations[currentLocation][0][yPos - 1][xPos];
+                playerDirection = "up";
+                targetSquare = mapLocations[currentLocation][0][playerY - 1][playerX];
                 if (typeof targetSquare === "string") {
                     loadNewMapArea(targetSquare);
-                } else if (yPos > 0 && targetSquare === 0) {
-                    yPos--
+                } else if (playerY > 0 && targetSquare === 0) {
+                    playerY--
                 }
                 break;
             case "down":
-                targetSquare = mapLocations[currentLocation][0][yPos + 1][xPos];
+                playerDirection = "down";
+                targetSquare = mapLocations[currentLocation][0][playerY + 1][playerX];
                 if (typeof targetSquare === "string") {
                     loadNewMapArea(targetSquare);
-                } else if (yPos < 18 && targetSquare === 0) {
-                    yPos++
+                } else if (playerY < 18 && targetSquare === 0) {
+                    playerY++
                 }
                 break;
             case "left":
-                targetSquare = mapLocations[currentLocation][0][yPos][xPos - 1];
+                playerDirection = "left";
+                targetSquare = mapLocations[currentLocation][0][playerY][playerX - 1];
                 if (typeof targetSquare === "string") {
                     loadNewMapArea(targetSquare);
-                } else if (xPos > 0 && targetSquare === 0) {
-                    xPos--
+                } else if (playerX > 0 && targetSquare === 0) {
+                    playerX--
                 }
                 break;
             case "right":
-                targetSquare = mapLocations[currentLocation][0][yPos][xPos + 1];
+                playerDirection = "right";
+                targetSquare = mapLocations[currentLocation][0][playerY][playerX + 1];
                 if (typeof targetSquare === "string") {
                     loadNewMapArea(targetSquare);
-                } else if (xPos < 20 && targetSquare === 0) {
-                    xPos++
+                } else if (playerX < 20 && targetSquare === 0) {
+                    playerX++
                 }
                 break;
             default:
         };
-        $("#player").css("top", ((100 / 18) * yPos) + "%");
-        $("#player").css("left", ((100 / 20) * xPos) + "%");
+        var mapY = ((5 - playerY) * squareSize) + "vw";
+        var mapX = ((5 - playerX) * squareSize) + "vw";
+        $("#screen").css("background-position", mapX + " " + mapY);
         moving = true;
         setTimeout(function(){ moving = false }, 240)
         playerState = "walking";
-        animatePlayer();
-    } else {
-        console.log("stuck");
+        animatePlayerMovement(direction);
     }
 }
 
@@ -62,20 +66,21 @@ function loadNewMapArea(name) {
     currentLocation = name;
     $("#player").hide();
     $("#screen").css("background-image", "url(img/" + name + ".png)");
-    yPos = mapLocations[currentLocation][1][lastLocation][0];
-    xPos = mapLocations[currentLocation][1][lastLocation][1];
-    $("#player").css("top", ((100 / 18) * yPos) + "%");
-    $("#player").css("left", ((100 / 20) * xPos) + "%");
+    playerY = mapLocations[currentLocation][1][lastLocation][0];
+    playerX = mapLocations[currentLocation][1][lastLocation][1];
+    var mapY = ((5 - playerY) * squareSize) + "vw";
+    var mapX = ((5 - playerX) * squareSize) + "vw";
+    $("#screen").css("background-position", mapX + " " + mapY);
     setTimeout(function() {
         $("#player").show();
-    }, 100);
+    }, 400);
 }
 
-function animatePlayer() {
+function animatePlayerMovement(direction) {
     var spriteX = "";
     var spriteY1 = "50%";
     var spriteY2 = "100%";
-    switch (playerDirection) {
+    switch (direction) {
         case "up":
             spriteX = "33.333%";
             break;
@@ -169,6 +174,6 @@ $(document).ready(function() {
     //Need to only trigger this if a move key was hit... right now it fires for any key
     $(document).on("keyup", function() {
         playerState = "standing";
-        animatePlayer();
+        animatePlayerMovement(playerDirection);
     });
 });

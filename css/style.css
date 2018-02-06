@@ -116,14 +116,15 @@ p {
 
 #screen {
   display: flex;
-  width: 30vw;
-  height: 27vw;
-  background-color: #485100;
+  width: 27.5vw;
+  height: 27.5vw;
+  background-color: black;
   background-image: url(../img/pallet.png);
   image-rendering: pixelated;
   background-repeat: no-repeat !important;
-  background-position: 2.5% 32%;
-  background-size: cover;
+  background-position: 0vw -2.5vw;
+  background-size: 50vw 45vw;
+  transition: background-position 0.4s linear;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -131,16 +132,17 @@ p {
   border: 2px solid black; }
 
 #player {
-  width: 1.5vw;
-  height: 1.5vw;
+  width: 2.5vw;
+  height: 2.5vw;
   background-image: url(../img/ash-sprite.png);
   image-rendering: pixelated;
   background-repeat: no-repeat !important;
   background-position: 0% 0%;
   background-size: 400% !important;
   position: absolute;
-  top: 33.3333333333%;
-  left: 25%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   transition: top 0.4s linear, left 0.4s linear; }
 
 #nintendo {
