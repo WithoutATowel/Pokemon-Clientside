@@ -1,39 +1,77 @@
-var xPos = 4;
-var yPos = 4;
+var yPos = 6;
+var xPos = 5;
 var playerDirection = "";
 var playerState = "standing";
 var walkingInterval = null;
 var moving = false;
 var token = 0;
+var currentLocation = "pallet";
 
 function movePlayer(direction) {
     if (!moving) {
         //if not already moving, move
+        var targetSquare = null;
         switch (direction) {
             case "up":
-                yPos = (yPos > 0) ? yPos - 1 : 0;
+                targetSquare = mapLocations[currentLocation][0][yPos - 1][xPos];
+                if (typeof targetSquare === "string") {
+                    loadNewMapArea(targetSquare);
+                } else if (yPos > 0 && targetSquare === 0) {
+                    yPos--
+                }
                 break;
             case "down":
-                yPos = (yPos < 8) ? yPos + 1 : 8;
+                targetSquare = mapLocations[currentLocation][0][yPos + 1][xPos];
+                if (typeof targetSquare === "string") {
+                    loadNewMapArea(targetSquare);
+                } else if (yPos < 18 && targetSquare === 0) {
+                    yPos++
+                }
                 break;
             case "left":
-                xPos = (xPos > 0) ? xPos - 1 : 0;
+                targetSquare = mapLocations[currentLocation][0][yPos][xPos - 1];
+                if (typeof targetSquare === "string") {
+                    loadNewMapArea(targetSquare);
+                } else if (xPos > 0 && targetSquare === 0) {
+                    xPos--
+                }
                 break;
             case "right":
-                xPos = (xPos < 8) ? xPos + 1 : 8;
+                targetSquare = mapLocations[currentLocation][0][yPos][xPos + 1];
+                if (typeof targetSquare === "string") {
+                    loadNewMapArea(targetSquare);
+                } else if (xPos < 20 && targetSquare === 0) {
+                    xPos++
+                }
                 break;
             default:
         };
-        $("#player").css("left", ((100 / 9) * xPos) + "%");
-        $("#player").css("top", ((100 / 9) * yPos) + "%");
+        $("#player").css("top", ((100 / 18) * yPos) + "%");
+        $("#player").css("left", ((100 / 20) * xPos) + "%");
         moving = true;
-        setTimeout(function(){ moving = false }, 450)
+        setTimeout(function(){ moving = false }, 240)
         playerState = "walking";
-        animateWalking();
+        animatePlayer();
+    } else {
+        console.log("stuck");
     }
 }
 
-function animateWalking() {
+function loadNewMapArea(name) {
+    var lastLocation = currentLocation;
+    currentLocation = name;
+    $("#player").hide();
+    $("#screen").css("background-image", "url(img/" + name + ".png)");
+    yPos = mapLocations[currentLocation][1][lastLocation][0];
+    xPos = mapLocations[currentLocation][1][lastLocation][1];
+    $("#player").css("top", ((100 / 18) * yPos) + "%");
+    $("#player").css("left", ((100 / 20) * xPos) + "%");
+    setTimeout(function() {
+        $("#player").show();
+    }, 100);
+}
+
+function animatePlayer() {
     var spriteX = "";
     var spriteY1 = "50%";
     var spriteY2 = "100%";
@@ -70,7 +108,6 @@ function animateWalking() {
     } 
 }
 
-
 $(document).ready(function() {
     $(document).on("keydown", function(event) {
         switch (event.keyCode) {
@@ -92,7 +129,6 @@ $(document).ready(function() {
     });
     $(document).on("keyup", function() {
         playerState = "standing";
-        animateWalking();
+        animatePlayer();
     });
 });
-

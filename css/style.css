@@ -48,7 +48,7 @@ p {
 
 .pill-button {
   display: block;
-  width: 65px;
+  width: 4.5vw;
   height: 15px;
   border-radius: 30px;
   background: #585858; }
@@ -66,15 +66,15 @@ p {
   display: inline-block;
   text-align: center;
   font-family: quantifier;
-  margin-left: 20px; }
+  margin-left: 2vw; }
 
 #b-box {
-  margin-left: 25px; }
+  margin-left: 2vw; }
 
 .round-button {
-  width: 100px;
-  height: 100px;
-  border-radius: 50px;
+  width: 7vw;
+  height: 7vw;
+  border-radius: 5vw;
   background: #96245d; }
 
 #a-b-button-box {
@@ -82,14 +82,31 @@ p {
   font-size: 2em; }
 
 .pad-square {
-  background-color: black; }
+  background-color: black;
+  border: none; }
 
 #d-pad {
   display: grid;
   grid-template: repeat(3, 1fr)/repeat(3, 1fr);
-  width: 150px;
-  height: 150px;
+  width: 11vw;
+  height: 11vw;
   margin: 0 auto 40px; }
+
+#d-pad-up {
+  border-radius: 3px 3px 0 0; }
+
+#d-pad-right {
+  border-radius: 0 3px 3px 0; }
+
+#d-pad-down {
+  border-radius: 0 0 3px 3px; }
+
+#d-pad-left {
+  border-radius: 3px 0 0 3px; }
+
+#d-pad-center {
+  border: 2px solid black;
+  z-index: 2; }
 
 #d-pad-and-start-select-box {
   position: absolute;
@@ -99,26 +116,32 @@ p {
 
 #screen {
   display: flex;
-  width: 31.5vw;
-  height: 31.5vw;
-  background-color: black;
+  width: 30vw;
+  height: 27vw;
+  background-color: #485100;
+  background-image: url(../img/pallet.png);
+  image-rendering: pixelated;
+  background-repeat: no-repeat !important;
+  background-position: 2.5% 32%;
+  background-size: cover;
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%); }
+  transform: translate(-50%, -50%);
+  border: 2px solid black; }
 
 #player {
-  width: 3.5vw;
-  height: 3.5vw;
-  background: url(../img/ash-sprite.png);
+  width: 1.5vw;
+  height: 1.5vw;
+  background-image: url(../img/ash-sprite.png);
   image-rendering: pixelated;
   background-repeat: no-repeat !important;
   background-position: 0% 0%;
   background-size: 400% !important;
   position: absolute;
-  top: 44.4444444444%;
-  left: 44.4444444444%;
-  transition: top 0.5s linear, left 0.5s linear; }
+  top: 33.3333333333%;
+  left: 25%;
+  transition: top 0.4s linear, left 0.4s linear; }
 
 #nintendo {
   font-family: nintender;
@@ -134,6 +157,7 @@ p {
   display: inline-block;
   font-family: sans-serif;
   border-radius: 10px;
-  margin: 5px 85% 0 5%; }
+  margin: 5px 85vw 0 5vw;
+  width: 95px; }
 
 /*# sourceMappingURL=style.css.map */
