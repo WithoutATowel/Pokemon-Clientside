@@ -21,49 +21,51 @@ var mapWidth = mapLocations[currentLocation][0][1].length;
 var mapHeight = mapLocations[currentLocation][0].length;
 
 function movePlayer(direction) {
-    playerDirection = direction;
-    playerState = "walking";
-    if (!moving && checkPermittedMove(direction)) {
-        //if not already moving and the next square is valid, move
-        switch (direction) {
-            case "up":
-                playerY--;
-                break;
-            case "down":
-                playerY++;
-                break;
-            case "left":
-                playerX--;
-                break;
-            case "right":
-                playerX++;
-                break;
-            default:
-        };
-        var squareType = mapLocations[currentLocation][0][playerY][playerX];
-        if (typeof squareType === "string") {
-                loadNewMapArea(squareType);
-            } else if (squareType === 0) {
-                walkingAnimation(direction);
-            } else if (squareType === 3) {
-                // 3 = water
-                // swimAnimation();
-            } else if (squareType === 4) {
-                walkingAnimation(direction);
-                triggerFight();
-            } else if (squareType === 5) {
-                jumpAnimation(direction);
-            }
-        // (5 squares on screen above + offset by 1 buffer row) - playerY
-        var mapY = ((6 - playerY) * squareSize) + "vw";
-        // (5 squares on screen above + offset by 1 buffer col) - playerX  
-        var mapX = ((6 - playerX) * squareSize) + "vw";
-        $("#screen").css("top", mapY);
-        $("#screen").css("left", mapX);
-        moving = true;
-        setTimeout(function() { moving = false }, 150)
-    } else {
-        walkingAnimation(direction);
+    if (playerState !== "locked") {
+        playerDirection = direction;
+        playerState = "walking";
+        if (!moving && checkPermittedMove(direction)) {
+            //if not already moving and the next square is valid, move
+            switch (direction) {
+                case "up":
+                    playerY--;
+                    break;
+                case "down":
+                    playerY++;
+                    break;
+                case "left":
+                    playerX--;
+                    break;
+                case "right":
+                    playerX++;
+                    break;
+                default:
+            };
+            var squareType = mapLocations[currentLocation][0][playerY][playerX];
+            if (typeof squareType === "string") {
+                    loadNewMapArea(squareType);
+                } else if (squareType === 0) {
+                    walkingAnimation(direction);
+                } else if (squareType === 3) {
+                    // 3 = water
+                    // swimAnimation();
+                } else if (squareType === 4) {
+                    walkingAnimation(direction);
+                    triggerFight();
+                } else if (squareType === 5) {
+                    jumpAnimation(direction);
+                }
+            // (5 squares on screen above + offset by 1 buffer row) - playerY
+            var mapY = ((6 - playerY) * squareSize) + "vw";
+            // (5 squares on screen above + offset by 1 buffer col) - playerX  
+            var mapX = ((6 - playerX) * squareSize) + "vw";
+            $("#screen").css("top", mapY);
+            $("#screen").css("left", mapX);
+            moving = true;
+            setTimeout(function() { moving = false }, 150)
+        } else {
+            walkingAnimation(direction);
+        }
     }
 }
 
@@ -239,9 +241,13 @@ function interactOrSelect() {
         default:
     }
     if (targetSquare.toString()[0] === "2") {
+        playerState = "locked";
+        console.log(playerState);
         item = staticObjects[currentLocation][parseInt(targetSquare.toString()[1])];
         showText(item.text);
     } else if (targetSquare.toString()[0] === "6") {
+        playerState = "locked";
+        console.log(playerState);
         item = allNPCs[currentLocation][parseInt(targetSquare.toString()[1])];
         showText(item.dialog);
     }
@@ -254,6 +260,7 @@ function showText(text) {
 
 function cancelOrBack() {
     $("#textBox").hide();
+    playerState = "standing";
 }
 
 function buttonPress(button) {
@@ -262,6 +269,10 @@ function buttonPress(button) {
 
 function triggerFight() {
     console.log("This square can trigger a fight");
+}
+
+function startMenu() {
+    console.log("This button opens the start menu");
 }
 
 $(document).ready(function() {
@@ -275,7 +286,7 @@ $(document).ready(function() {
                 movePlayer("left");
                 break;
             case 65:
-                //"a" button
+                //keyboard "a" button
                 movePlayer("left");
                 break;
             case 38:
@@ -283,7 +294,7 @@ $(document).ready(function() {
                 movePlayer("up");
                 break;
             case 87:
-                //"w" button
+                //keyboard "w" button
                 movePlayer("up");
                 break;
             case 39:
@@ -291,7 +302,7 @@ $(document).ready(function() {
                 movePlayer("right");
                 break;
             case 68:
-                //"d" button
+                //keyboard "d" button
                 movePlayer("right");
                 break;
             case 40:
@@ -299,7 +310,7 @@ $(document).ready(function() {
                 movePlayer("down");
                 break;
             case 83:
-                //"s" button
+                //keyboard "s" button
                 movePlayer("down");
                 break;
             case 75:
@@ -323,8 +334,8 @@ $(document).ready(function() {
     });
 
     $(document).on("keyup", function(event) {
-        var gameButtons = [37, 65, 38, 87, 39, 68, 40, 83, 75, 76, 71, 72];
-        if (gameButtons.includes(event.keyCode)) {
+        var gameButtons = [37, 65, 38, 87, 39, 68, 40, 83];
+        if (gameButtons.includes(event.keyCode) && playerState === "walking") {
             playerState = "standing";
             walkingAnimation(playerDirection);
         }
