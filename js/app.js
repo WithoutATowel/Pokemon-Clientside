@@ -24,6 +24,8 @@ var token = 0;
 var currentLocation = "pallet";
 var mapWidth = mapLocations[currentLocation][0][1].length;
 var mapHeight = mapLocations[currentLocation][0].length;
+var pokedex = [];
+var inventory = [];
 
 function movePlayer(direction) {
     if (playerState !== "locked") {
@@ -180,8 +182,8 @@ function loadNPCsAndObjects(location) {
             if (item.status === "unclaimed") {
                 $("#screen").append("<div class='claimableObject' id='" + item.id + "'></div>");
                 $("#" + item.id).css("background-image", "url(" + item.background + ")");
-                var itemPosY = (item.location[0] * squareSize - 0.4) + "vw";
-                var itemPosX = (item.location[1] * squareSize) + "vw";
+                var itemPosY = ((item.location[0] - 1) * squareSize - 0.4) + "vw";
+                var itemPosX = ((item.location[1] - 1) * squareSize) + "vw";
                 $("#" + item.id).css("top", itemPosY);
                 $("#" + item.id).css("left", itemPosX);
             }
@@ -270,13 +272,22 @@ function interactOrSelect() {
 }
 
 function takeItem(itemId) {
-    if (itemId !== false) {
+    if (itemId !== "false") {
+        var item = claimableObjects[currentLocation][itemId];
         // Place item into appropriate location... inventory or pokedex 
+        if (item.type === "pokemon") {
+            pokedex.push(item);
+        } else {
+            inventory.push(item);
+        }
         // Delete item from claimableObjects
-        // Remove item from the gameboard
-        console.log("You claimed item " + itemId);
-    }
-    
+        claimableObjects[currentLocation][itemId].status = "claimed";
+        // Remove item from the gameboard [y, x]
+        var itemY = item.location[0];
+        var itemX = item.location[1];
+        mapLocations[currentLocation][0][itemY][itemX] = 1;
+        $("#" + item.id).remove();
+    } 
 }
 
 function showText(text) {

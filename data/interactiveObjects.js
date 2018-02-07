@@ -57,25 +57,25 @@ var staticObjects = {
 var claimableObjects = {
     oakLab : [
         { 
-            itemType : "pokeball",
+            type : "pokemon",
             id : "bulbasaur",
-            location : [3, 6],
+            location : [4, 7],
             background : "img/objects/pokeball.png",
             confirmText : "Claim Bulbasaur as your first Pokemon?",
             status : "unclaimed"
         },
         { 
-            itemType : "pokeball",
+            type : "pokemon",
             id : "squirtle",
-            location : [3, 7],
+            location : [4, 8],
             background : "img/objects/pokeball.png",
             confirmText : "Claim Squirtle as your first Pokemon?",
             status : "unclaimed"
         },
         { 
-            itemType : "pokeball",
+            type : "pokemon",
             id : "charmander",
-            location : [3, 8],
+            location : [4, 9],
             background : "img/objects/pokeball.png",
             confirmText : "Claim Charmander as your first Pokemon?",
             status : "unclaimed"
