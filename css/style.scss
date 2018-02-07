@@ -24,7 +24,7 @@ html, body {
     text-align: center;
 }
 
-p {
+#select-and-start-box p {
     margin: 10px 0 0 0;
 }
 
@@ -177,6 +177,7 @@ p {
     transform: translate(-50%, -50%);
     border: 2px solid black;
     overflow: hidden;
+    font-family: pokemon;
 }
 
 #screen {
@@ -240,22 +241,42 @@ p {
 
 #textBox {
     display: none;
-    background-image: url(../img/text-box.png);
-    width: 11 * $edgeLength;
-    height: 3.5 * $edgeLength;
+    position: absolute;
+    bottom: 0;
+    text-align: left;
+    color: black;
+    font-size: 1vw;
+}
+
+#confirm {
+    display: none;
+    width: 2 * $edgeLength;
+    height: 2.7vw;
+    float: right;
+    background-image: url(../img/confirm.png);
+    padding: 5%;
     background-size: 100% !important;
     background-repeat: no-repeat !important;
     image-rendering: pixelated;
-    position: absolute;
-    bottom: 0;
+}
+
+#confirm > div {
+    display: inline-block;
+}
+
+#confirm p {
+    margin: 0;
+    padding: 0;
 }
 
 #text {
-    font-family: pokemon;
-    text-align: left;
+    background-image: url(../img/text-box.png);
     width: 9 * $edgeLength;
-    position: absolute;
-    top: $edgeLength;
-    left: $edgeLength;
+    min-height: 3.5vw;
+    background-size: 100% !important;
+    background-repeat: no-repeat !important;
+    image-rendering: pixelated;
+    clear: both;
+    padding: 2.5vw 2.5vw 2.1vw 2.5vw;;
 }
 

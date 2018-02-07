@@ -14,7 +14,7 @@ html, body {
   color: #032760;
   text-align: center; }
 
-p {
+#select-and-start-box p {
   margin: 10px 0 0 0; }
 
 .vertical-center {
@@ -127,7 +127,8 @@ p {
   left: 50%;
   transform: translate(-50%, -50%);
   border: 2px solid black;
-  overflow: hidden; }
+  overflow: hidden;
+  font-family: pokemon; }
 
 #screen {
   width: 50vw;
@@ -182,21 +183,38 @@ p {
 
 #textBox {
   display: none;
+  position: absolute;
+  bottom: 0;
+  text-align: left;
+  color: black;
+  font-size: 1vw; }
+
+#confirm {
+  display: none;
+  width: 5vw;
+  height: 2.7vw;
+  float: right;
+  background-image: url(../img/confirm.png);
+  padding: 5%;
+  background-size: 100% !important;
+  background-repeat: no-repeat !important;
+  image-rendering: pixelated; }
+
+#confirm > div {
+  display: inline-block; }
+
+#confirm p {
+  margin: 0;
+  padding: 0; }
+
+#text {
   background-image: url(../img/text-box.png);
-  width: 27.5vw;
-  height: 8.75vw;
+  width: 22.5vw;
+  min-height: 3.5vw;
   background-size: 100% !important;
   background-repeat: no-repeat !important;
   image-rendering: pixelated;
-  position: absolute;
-  bottom: 0; }
-
-#text {
-  font-family: pokemon;
-  text-align: left;
-  width: 22.5vw;
-  position: absolute;
-  top: 2.5vw;
-  left: 2.5vw; }
+  clear: both;
+  padding: 2.5vw 2.5vw 2.1vw 2.5vw; }
 
 /*# sourceMappingURL=style.css.map */

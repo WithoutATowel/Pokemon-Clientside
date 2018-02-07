@@ -61,6 +61,7 @@ var claimableObjects = {
             id : "bulbasaur",
             location : [3, 6],
             background : "img/objects/pokeball.png",
+            confirmText : "Claim Bulbasaur as your first Pokemon?",
             status : "unclaimed"
         },
         { 
@@ -68,6 +69,7 @@ var claimableObjects = {
             id : "squirtle",
             location : [3, 7],
             background : "img/objects/pokeball.png",
+            confirmText : "Claim Squirtle as your first Pokemon?",
             status : "unclaimed"
         },
         { 
@@ -75,6 +77,7 @@ var claimableObjects = {
             id : "charmander",
             location : [3, 8],
             background : "img/objects/pokeball.png",
+            confirmText : "Claim Charmander as your first Pokemon?",
             status : "unclaimed"
         }
     ]

@@ -4,9 +4,14 @@
 // update maps.js --> JSON, start that server thing, load data using AJAX
 // Add NPC movement
 // Fix walking bug: https://stackoverflow.com/questions/29279805/keydown-doesnt-continuously-fire-when-pressed-and-hold?rq=1
+// Put a book on the table in rivalHouse?
 
 // TODAY
-// 
+// player inventory
+// data structure for storing pokemon
+// "claim pokemon" interaction
+// build fight screens + logic w/ 1 hardcoded enemy pokemon
+// Build API calls for randomly generated pokemon? 
 
 var squareSize = 2.5;
 var playerY = 7; 
@@ -125,6 +130,9 @@ function checkPermittedMove(direction) {
     } else if (targetSquare.toString()[0] === "6") {
         // Square is taken by an NPC
         return false;
+    } else if (targetSquare.toString()[0] === "7") {
+        // Square is taken by a claimable object
+        return false;
     } else {
         // Nothing disqualifies the square
         return true;
@@ -220,6 +228,7 @@ function walkingAnimation(direction) {
 
 function jumpAnimation(direction) {
     console.log("Ashe jumped!");
+    //extra line to make this foldable
 }
 
 function interactOrSelect() {
@@ -241,19 +250,37 @@ function interactOrSelect() {
         default:
     }
     if (targetSquare.toString()[0] === "2") {
-        playerState = "locked";
-        console.log(playerState);
         item = staticObjects[currentLocation][parseInt(targetSquare.toString()[1])];
         showText(item.text);
     } else if (targetSquare.toString()[0] === "6") {
-        playerState = "locked";
-        console.log(playerState);
         item = allNPCs[currentLocation][parseInt(targetSquare.toString()[1])];
         showText(item.dialog);
+    } else if (targetSquare.toString()[0] === "7") {
+        var itemId = parseInt(targetSquare.toString()[1]);
+        item = claimableObjects[currentLocation][itemId];
+        if (item.confirmText) {
+            showText(item.confirmText);
+            $("#confirm").show();
+            $("#yes").attr("data-value", itemId);
+            chooseMenuItem(document.getElementById("confirmOptions").children, takeItem);
+        } else {
+            takeItem(itemId); // no confirm needed, so pass the item ID to takeItem()
+        }
     }
 }
 
+function takeItem(itemId) {
+    if (itemId !== false) {
+        // Place item into appropriate location... inventory or pokedex 
+        // Delete item from claimableObjects
+        // Remove item from the gameboard
+        console.log("You claimed item " + itemId);
+    }
+    
+}
+
 function showText(text) {
+    playerState = "locked";
     $("#text").text(text);
     $("#textBox").show();
 }
@@ -263,22 +290,79 @@ function cancelOrBack() {
     playerState = "standing";
 }
 
+function chooseMenuItem(options, callback) {
+    var selectedOption = 0;
+    
+    // Place an indicator arrow in the appropriate row, mark option with class "selectedOption"
+    function drawArrow() {
+        options[selectedOption].innerHTML = "&#9658;"
+        options[selectedOption].classList.add('selectedOption')
+        for (i = 0; i < options.length; i++) {
+            if (i !== selectedOption) {
+                options[i].innerHTML = "&nbsp;";
+            }
+        }
+    }
+    drawArrow();
+
+    // up + down buttons move the arrow around + add/remove "selectedOption" class
+    $(document).off("keydown");
+    $(document).on("keydown", function(event) {
+        switch (event.keyCode) {
+            case 38:
+            case 87:
+                // up arrow & keyboard "w" button
+                if (selectedOption === 0) {
+                    selectedOption = options.length - 1;
+                } else {
+                    selectedOption--;
+                }
+                drawArrow();
+                break;
+            case 40:
+            case 83:
+                // down arrow & keyboard "s" button
+                if (selectedOption < (options.length - 1)) {
+                    selectedOption++;
+                } else {
+                    selectedOption = 0;
+                }
+                drawArrow();
+                break;
+            case 75:
+                //"k" button -> A. Return data-value of item with the "selectedOption" class.
+                callback(options[selectedOption].getAttribute("data-value"));
+                cancelOrBack();
+                $(document).off("keydown");
+                setGameControls();
+                break;
+            case 76:
+                //"l" button -> B
+                cancelOrBack();
+                $(document).off("keydown");
+                setGameControls();
+                break;
+            default:
+        };
+    });
+}
+
 function buttonPress(button) {
     console.log(button, "was pressed");
+    //extra line to make this foldable
 }
 
 function triggerFight() {
     console.log("This square can trigger a fight");
+    //extra line to make this foldable
 }
 
 function startMenu() {
     console.log("This button opens the start menu");
+    //extra line to make this foldable
 }
 
-$(document).ready(function() {
-    loadNPCsAndObjects(currentLocation);
-
-    // Set game control event handlers
+function setGameControls() {
     $(document).on("keydown", function(event) {
         switch (event.keyCode) {
             case 37:
@@ -315,7 +399,11 @@ $(document).ready(function() {
                 break;
             case 75:
                 //"k" button -> A
-                interactOrSelect();
+                if (playerState !== "locked") {
+                    interactOrSelect();
+                } else {
+                    chooseMenuItem();
+                }
                 break;
             case 76:
                 //"l" button -> B
@@ -326,7 +414,7 @@ $(document).ready(function() {
                 buttonPress("select");
                 break;
             case 72:
-                //"h" button ->
+                //"h" button -> start
                 startMenu("start");
                 break;
             default:
@@ -340,4 +428,9 @@ $(document).ready(function() {
             walkingAnimation(playerDirection);
         }
     });
+}
+
+$(document).ready(function() {
+    loadNPCsAndObjects(currentLocation);
+    setGameControls();
 });
