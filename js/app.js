@@ -240,11 +240,20 @@ function interactOrSelect() {
     }
     if (targetSquare.toString()[0] === "2") {
         item = staticObjects[currentLocation][parseInt(targetSquare.toString()[1])];
-        console.log(item.text);
+        showText(item.text);
     } else if (targetSquare.toString()[0] === "6") {
         item = allNPCs[currentLocation][parseInt(targetSquare.toString()[1])];
-        console.log(item.dialog);
+        showText(item.dialog);
     }
+}
+
+function showText(text) {
+    $("#text").text(text);
+    $("#textBox").show();
+}
+
+function cancelOrBack() {
+    $("#textBox").hide();
 }
 
 function buttonPress(button) {

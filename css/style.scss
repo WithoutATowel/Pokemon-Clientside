@@ -11,6 +11,11 @@ $dPadBorderRadius: 3px;
     src: url("fonts/quantifier.ttf");
 }
 
+@font-face {
+    font-family: "pokemon";
+    src: url("fonts/pokemon.ttf");
+}
+
 html, body {
     margin: 0;
     padding: 0;
@@ -231,5 +236,26 @@ p {
     border-radius: 10px;
     margin: 5px 85vw 0 5vw;
     width: 95px;
+}
+
+#textBox {
+    display: none;
+    background-image: url(../img/text-box.png);
+    width: 11 * $edgeLength;
+    height: 3.5 * $edgeLength;
+    background-size: 100% !important;
+    background-repeat: no-repeat !important;
+    image-rendering: pixelated;
+    position: absolute;
+    bottom: 0;
+}
+
+#text {
+    font-family: pokemon;
+    text-align: left;
+    width: 9 * $edgeLength;
+    position: absolute;
+    top: $edgeLength;
+    left: $edgeLength;
 }
 
