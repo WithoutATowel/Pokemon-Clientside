@@ -62,13 +62,13 @@ p {
 #start {
   margin-left: 10px; }
 
-#b-box, #a-box {
+#a-box, #b-box {
   display: inline-block;
   text-align: center;
   font-family: quantifier;
   margin-left: 2vw; }
 
-#b-box {
+#a-box {
   margin-left: 2vw; }
 
 .round-button {
@@ -114,22 +114,29 @@ p {
   left: 50%;
   transform: translate(-50%, -50%); }
 
-#screen {
+#screenBox {
   display: flex;
   width: 27.5vw;
   height: 27.5vw;
   background-color: black;
-  background-image: url(../img/pallet.png);
-  image-rendering: pixelated;
-  background-repeat: no-repeat !important;
-  background-position: 0vw -2.5vw;
-  background-size: 50vw 45vw;
-  transition: background-position 0.25s linear;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  border: 2px solid black; }
+  border: 2px solid black;
+  overflow: hidden; }
+
+#screen {
+  width: 50vw;
+  height: 45vw;
+  background-image: url(../img/pallet.png);
+  image-rendering: pixelated;
+  background-repeat: no-repeat !important;
+  background-size: 100%;
+  transition: top 0.25s linear, left 0.25s linear;
+  position: absolute;
+  left: 0;
+  top: -2.5vw; }
 
 #player {
   width: 2.5vw;
@@ -143,6 +150,15 @@ p {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%); }
+
+.npc, .claimableObject {
+  width: 2.5vw;
+  height: 2.5vw;
+  image-rendering: pixelated;
+  background-repeat: no-repeat !important;
+  background-position: center;
+  background-size: 100% !important;
+  position: absolute; }
 
 #nintendo {
   font-family: nintender;

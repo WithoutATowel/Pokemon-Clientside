@@ -1,14 +1,12 @@
 // LATER
-// Fix walking bug:
-// https://stackoverflow.com/questions/29279805/keydown-doesnt-continuously-fire-when-pressed-and-hold?rq=1
+// add jump animation for ledges
+// make map transitions smoother
+// update maps.js --> JSON, start that server thing, load data using AJAX
+// Add NPC movement
+// Fix walking bug: https://stackoverflow.com/questions/29279805/keydown-doesnt-continuously-fire-when-pressed-and-hold?rq=1
 
 // TODAY
-// add buffer rows + columns around maps, move map transition squares back
-// add jump behavior for ledges
-// add objects + NPCs to maps
-// update maps.js --> JSON, start that server thing, load data using AJAX
-// add npcs data to dedicated
-// make map transitions smoother
+// 
 
 var squareSize = 2.5;
 var playerY = 7; 
@@ -23,57 +21,111 @@ var mapWidth = mapLocations[currentLocation][0][1].length;
 var mapHeight = mapLocations[currentLocation][0].length;
 
 function movePlayer(direction) {
-    if (!moving) {
-        //if not already moving, move
-        var targetSquare = null;
+    playerDirection = direction;
+    playerState = "walking";
+    if (!moving && checkPermittedMove(direction)) {
+        //if not already moving and the next square is valid, move
         switch (direction) {
             case "up":
-                playerDirection = "up";
-                targetSquare = mapLocations[currentLocation][0][playerY - 1][playerX];
-                if (typeof targetSquare === "string") {
-                    loadNewMapArea(targetSquare);
-                } else if (playerY > 0 && targetSquare !== 1) {
-                    playerY--
-                }
+                playerY--;
                 break;
             case "down":
-                playerDirection = "down";
-                targetSquare = mapLocations[currentLocation][0][playerY + 1][playerX];
-                if (typeof targetSquare === "string") {
-                    loadNewMapArea(targetSquare);
-                } else if (targetSquare === 4) {
-                    triggerFight();
-                } else if (playerY < mapHeight && targetSquare !== 1) {
-                    playerY++
-                }
+                playerY++;
                 break;
             case "left":
-                playerDirection = "left";
-                targetSquare = mapLocations[currentLocation][0][playerY][playerX - 1];
-                if (typeof targetSquare === "string") {
-                    loadNewMapArea(targetSquare);
-                } else if (playerX > 0 && targetSquare !== 1) {
-                    playerX--
-                }
+                playerX--;
                 break;
             case "right":
-                playerDirection = "right";
-                targetSquare = mapLocations[currentLocation][0][playerY][playerX + 1];
-                if (typeof targetSquare === "string") {
-                    loadNewMapArea(targetSquare);
-                } else if (playerX < mapWidth && targetSquare !== 1) {
-                    playerX++
-                }
+                playerX++;
                 break;
             default:
         };
-        var mapY = ((6 - playerY) * squareSize) + "vw";  // (5 squares on screen above + offset by 1 buffer row) - playerY
-        var mapX = ((6 - playerX) * squareSize) + "vw";  // (5 squares on screen above + offset by 1 buffer col) - playerX
-        $("#screen").css("background-position", mapX + " " + mapY);
+        var squareType = mapLocations[currentLocation][0][playerY][playerX];
+        if (typeof squareType === "string") {
+                loadNewMapArea(squareType);
+            } else if (squareType === 0) {
+                walkingAnimation(direction);
+            } else if (squareType === 3) {
+                // 3 = water
+                // swimAnimation();
+            } else if (squareType === 4) {
+                walkingAnimation(direction);
+                triggerFight();
+            } else if (squareType === 5) {
+                jumpAnimation(direction);
+            }
+        // (5 squares on screen above + offset by 1 buffer row) - playerY
+        var mapY = ((6 - playerY) * squareSize) + "vw";
+        // (5 squares on screen above + offset by 1 buffer col) - playerX  
+        var mapX = ((6 - playerX) * squareSize) + "vw";
+        $("#screen").css("top", mapY);
+        $("#screen").css("left", mapX);
         moving = true;
-        setTimeout(function(){ moving = false }, 150)
-        playerState = "walking";
-        animatePlayerMovement(direction);
+        setTimeout(function() { moving = false }, 150)
+    } else {
+        walkingAnimation(direction);
+    }
+}
+
+function checkPermittedMove(direction) {
+    var targetSquare = null;
+    switch (direction) {
+        case "up":
+            //Make sure player isn't already at the top of the map
+            targetSquare = mapLocations[currentLocation][0][playerY - 1][playerX];
+            if (typeof targetSquare === "string"){
+                return true;
+            } else if (playerY === 0) {
+                return false;
+            }
+            break;
+        case "down":
+            //Make sure player isn't already at the bottom of the map
+            targetSquare = mapLocations[currentLocation][0][playerY + 1][playerX];
+            if (typeof targetSquare === "string"){
+                return true;
+            } else if (playerY === mapHeight) {
+                return false;
+            }
+            break;
+        case "left":
+            //Make sure player isn't already at the left edge of the map
+            targetSquare = mapLocations[currentLocation][0][playerY][playerX - 1];
+            if (typeof targetSquare === "string"){
+                return true;
+            } else if (playerX === 0) {
+                return false;
+            }
+            break;
+        case "right":
+            //Make sure player isn't already at the right edge of the map
+            targetSquare = mapLocations[currentLocation][0][playerY][playerX + 1];
+            if (typeof targetSquare === "string"){
+                return true;
+            } else if (playerX === mapWidth) {
+                return false;
+            }
+            break;
+        default:
+    }
+    if (targetSquare === 1 || targetSquare === 3) {
+        // Next square is an obstacle
+        return false;
+    } else if (targetSquare.toString()[0] === "2") {
+        // Square is taken by an interactive object
+        return false;
+    } else if (targetSquare === 5 && direction !== "down") {
+        // Can only jump *down* ledges
+        return false;
+    } else if (targetSquare === 5 && direction === "down") {
+        // Next square is a ledge and the player is moving down
+        return true;
+    } else if (targetSquare.toString()[0] === "6") {
+        // Square is taken by an NPC
+        return false;
+    } else {
+        // Nothing disqualifies the square
+        return true;
     }
 }
 
@@ -84,18 +136,50 @@ function loadNewMapArea(name) {
     mapHeight = mapLocations[currentLocation][0].length - 2;
     $("#player").hide();
     $("#screen").css("background-image", "url(img/" + name + ".png)");
-    $("#screen").css("background-size", (mapWidth * squareSize) + "vw " + (mapHeight * squareSize) + "vw");
+    $("#screen").css("width", (mapWidth * squareSize) + "vw ");
+    $("#screen").css("height", (mapHeight * squareSize) + "vw");
     playerY = mapLocations[currentLocation][1][lastLocation][0];
     playerX = mapLocations[currentLocation][1][lastLocation][1];
     var mapY = ((6 - playerY) * squareSize) + "vw";
     var mapX = ((6 - playerX) * squareSize) + "vw";
-    $("#screen").css("background-position", mapX + " " + mapY);
+    $("#screen").css("top", mapY);
+    $("#screen").css("left", mapX);
+    loadNPCsAndObjects(currentLocation);
     setTimeout(function() {
         $("#player").show();
     }, 400);
 }
 
-function animatePlayerMovement(direction) {
+function loadNPCsAndObjects(location) {
+    $(".npc").remove();
+    $(".claimableObject").remove();
+    if (allNPCs[location]) {
+        var currentNPCs = allNPCs[location];
+        currentNPCs.forEach(function(item) {
+            $("#screen").append("<div class='npc' id='" + item.name + "'></div>");
+            $("#" + item.name).css("background-image", "url(" + item.background + ")");
+            var npcPosY = (item.location[0] * squareSize) + "vw";
+            var npcPosX = (item.location[1] * squareSize) + "vw";
+            $("#" + item.name).css("top", npcPosY);
+            $("#" + item.name).css("left", npcPosX);
+        });
+    }
+    if (claimableObjects[location]) {
+        var currentClaimableObjects = claimableObjects[location];
+        currentClaimableObjects.forEach(function(item) {
+            if (item.status === "unclaimed") {
+                $("#screen").append("<div class='claimableObject' id='" + item.id + "'></div>");
+                $("#" + item.id).css("background-image", "url(" + item.background + ")");
+                var itemPosY = (item.location[0] * squareSize - 0.4) + "vw";
+                var itemPosX = (item.location[1] * squareSize) + "vw";
+                $("#" + item.id).css("top", itemPosY);
+                $("#" + item.id).css("left", itemPosX);
+            }
+        });
+    }
+}
+
+function walkingAnimation(direction) {
     var spriteX = "";
     var spriteY1 = "50%";
     var spriteY2 = "100%";
@@ -132,6 +216,37 @@ function animatePlayerMovement(direction) {
     } 
 }
 
+function jumpAnimation(direction) {
+    console.log("Ashe jumped!");
+}
+
+function interactOrSelect() {
+    var item = null;
+    var targetSquare = null;
+    switch (playerDirection) {
+        case "up":
+            targetSquare = mapLocations[currentLocation][0][playerY - 1][playerX];
+            break;
+        case "down":
+            targetSquare = mapLocations[currentLocation][0][playerY + 1][playerX];
+            break;
+        case "left":
+            targetSquare = mapLocations[currentLocation][0][playerY][playerX - 1];
+            break;
+        case "right":
+            targetSquare = mapLocations[currentLocation][0][playerY][playerX + 1];
+            break;
+        default:
+    }
+    if (targetSquare.toString()[0] === "2") {
+        item = staticObjects[currentLocation][parseInt(targetSquare.toString()[1])];
+        console.log(item.text);
+    } else if (targetSquare.toString()[0] === "6") {
+        item = allNPCs[currentLocation][parseInt(targetSquare.toString()[1])];
+        console.log(item.dialog);
+    }
+}
+
 function buttonPress(button) {
     console.log(button, "was pressed");
 }
@@ -141,6 +256,9 @@ function triggerFight() {
 }
 
 $(document).ready(function() {
+    loadNPCsAndObjects(currentLocation);
+
+    // Set game control event handlers
     $(document).on("keydown", function(event) {
         switch (event.keyCode) {
             case 37:
@@ -176,20 +294,20 @@ $(document).ready(function() {
                 movePlayer("down");
                 break;
             case 75:
-                //"k" button
-                buttonPress("B");
+                //"k" button -> A
+                interactOrSelect();
                 break;
             case 76:
-                //"l" button
-                buttonPress("A");
+                //"l" button -> B
+                cancelOrBack();
                 break;
             case 71:
-                //"g" button
+                //"g" button -> select
                 buttonPress("select");
                 break;
             case 72:
-                //"h" button
-                buttonPress("start");
+                //"h" button ->
+                startMenu("start");
                 break;
             default:
         };     
@@ -199,7 +317,7 @@ $(document).ready(function() {
         var gameButtons = [37, 65, 38, 87, 39, 68, 40, 83, 75, 76, 71, 72];
         if (gameButtons.includes(event.keyCode)) {
             playerState = "standing";
-            animatePlayerMovement(playerDirection);
+            walkingAnimation(playerDirection);
         }
     });
 });
