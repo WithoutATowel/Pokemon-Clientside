@@ -2,6 +2,7 @@
 // create "keyboard" menu for entering your player's name. Store it in localStorage.
 // add jump animation for ledges
 // make map transitions smoother
+// No player movement while new map is loading
 // update maps.js --> JSON, start that server thing, load data using AJAX
 // Fix walking bug: https://stackoverflow.com/questions/29279805/keydown-doesnt-continuously-fire-when-pressed-and-hold?rq=1
 // Put a book on the table in rivalHouse?
@@ -262,12 +263,18 @@ function interactOrSelect() {
         default:
     }
     if (targetSquare.toString()[0] === "2") {
+        // Static, interactive objects
         item = staticObjects[currentLocation][parseInt(targetSquare.toString()[1])];
         showText(item.text);
     } else if (targetSquare.toString()[0] === "6") {
+        // NPCs
         item = allNPCs[currentLocation][parseInt(targetSquare.toString()[1])];
         showText(item.dialog);
+        if (item.healer) {
+            ownedPokemon.forEach(item => item.currentHP = item.maxHP);
+        }
     } else if (targetSquare.toString()[0] === "7") {
+        // Claimable items
         var itemId = parseInt(targetSquare.toString()[1]);
         item = claimableObjects[currentLocation][itemId];
         if (item.confirmText) {
@@ -391,6 +398,7 @@ function triggerFight() {
 
         if (moveIndex) {
             $("#friendlyPokemonImage").effect("bounce");
+            $("#battleOptions").hide();
             ranPokemon.currentHP -= pokeMoves[moveIndex].damage;
             var healthBarWidth = 8.1 * (ranPokemon.currentHP / ranPokemon.maxHP);
             setTimeout(function() {
@@ -416,7 +424,6 @@ function triggerFight() {
             // Computer goes second
             setTimeout(function() {
                 computerMove = computerMoveAI(ranPokemon);
-                $("#battleOptions").hide();
                 $("#battleText").show();
                 $("#battleText").text(ranPokemon.name + " used " + pokeMoves[computerMove].name + "!");
                 $("#enemyPokemonImage").effect("bounce");
@@ -424,6 +431,7 @@ function triggerFight() {
                 var healthBarWidth = 8.1 * (myPokemon.currentHP / myPokemon.maxHP);
                 setTimeout(function() {
                     $("#friendlyPokemonHealthBar").css("width", healthBarWidth + "vw");
+                    $("#friendlyPokemonHealthNum").html(myPokemon.currentHP + " &nbsp; &nbsp; &nbsp; &nbsp;" + myPokemon.maxHP);
                 }, 500);
                 turn--;
                 $(document).on("keydown", function(event) {
@@ -474,8 +482,9 @@ function triggerFight() {
         var healthBarWidth = 8.1 * (myPokemon.currentHP / myPokemon.maxHP);
         $("#friendlyPokemonHealthBar").css("width", healthBarWidth + "vw");
         $("#friendlyPokemonLevel").text(myPokemon.level);
-        $("#friendlyPokemonHealthNum").html(myPokemon.currentHP + " &nbsp; &nbsp; &nbsp; &nbsp;" + myPokemon.maxHP)
+        $("#friendlyPokemonHealthNum").html(myPokemon.currentHP + " &nbsp; &nbsp; &nbsp; &nbsp;" + myPokemon.maxHP);
         $("#friendlyPokemonImage").attr("src", myPokemon.backImage);
+        $("#friendlyPokemonImage").show();
         var moveDivs = $("#moveOptionsText").children();
         moveDivs.each(function(index) {
             if (!isNaN(myPokemon.moves[index])) {
@@ -547,7 +556,7 @@ function setGameControls() {
                 if (playerState !== "locked") {
                     interactOrSelect();
                 } else {
-                    chooseMenuItem();
+                    cancelOrBack();
                 }
                 break;
             case 76:

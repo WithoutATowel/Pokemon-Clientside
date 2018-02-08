@@ -31,7 +31,8 @@ var allNPCs = {
             background : "img/npcs/ashHouse1/60.png", 
             facing : "down", 
             trainer : false, 
-            dialog : "You gotta eat! Who do you think you are?"
+            dialog : "You gotta eat! Who do you think you are?",
+            healer : true
         }
     ],
     rivalHouse : [
