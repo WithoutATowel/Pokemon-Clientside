@@ -1,17 +1,26 @@
 // LATER
+// create "keyboard" menu for entering your player's name. Store it in localStorage.
 // add jump animation for ledges
 // make map transitions smoother
 // update maps.js --> JSON, start that server thing, load data using AJAX
-// Add NPC movement
 // Fix walking bug: https://stackoverflow.com/questions/29279805/keydown-doesnt-continuously-fire-when-pressed-and-hold?rq=1
 // Put a book on the table in rivalHouse?
+// Intro animation
+// "Turn Gameboy off/on"
+// Save game
 
 // TODAY
-// player inventory
-// data structure for storing pokemon
-// "claim pokemon" interaction
-// build fight screens + logic w/ 1 hardcoded enemy pokemon
-// Build API calls for randomly generated pokemon? 
+// Add healing (talk to Mom)
+// Add NPCs to Route1
+// Add Pokemaster battles
+// Add NPC movement
+// Prevent player from taking more than 1 Pokemon
+// Prevent player from leaving Pallet without a pokemon w/ positive health. Show a warning message.
+// Add leveling up
+// Incorporate Pokemon stats into battle mode
+// Make Growl do something
+// Randomize pokestats
+// Add some RNG to damage per attack
 
 var squareSize = 2.5;
 var playerY = 7; 
@@ -24,8 +33,8 @@ var token = 0;
 var currentLocation = "pallet";
 var mapWidth = mapLocations[currentLocation][0][1].length;
 var mapHeight = mapLocations[currentLocation][0].length;
-var pokedex = [];
 var inventory = [];
+var ownedPokemon = pokedex.filter(item => item.owned);
 
 function movePlayer(direction) {
     if (playerState !== "locked") {
@@ -180,12 +189,12 @@ function loadNPCsAndObjects(location) {
         var currentClaimableObjects = claimableObjects[location];
         currentClaimableObjects.forEach(function(item) {
             if (item.status === "unclaimed") {
-                $("#screen").append("<div class='claimableObject' id='" + item.id + "'></div>");
-                $("#" + item.id).css("background-image", "url(" + item.background + ")");
+                $("#screen").append("<div class='claimableObject' id='" + item.name + "'></div>");
+                $("#" + item.name).css("background-image", "url(" + item.background + ")");
                 var itemPosY = ((item.location[0] - 1) * squareSize - 0.4) + "vw";
                 var itemPosX = ((item.location[1] - 1) * squareSize) + "vw";
-                $("#" + item.id).css("top", itemPosY);
-                $("#" + item.id).css("left", itemPosX);
+                $("#" + item.name).css("top", itemPosY);
+                $("#" + item.name).css("left", itemPosX);
             }
         });
     }
@@ -195,22 +204,23 @@ function walkingAnimation(direction) {
     var spriteX = "";
     var spriteY1 = "50%";
     var spriteY2 = "100%";
+    direction = (direction) ? direction : playerDirection;
     switch (direction) {
         case "up":
             spriteX = "33.333%";
             break;
         case "down":
-            spriteX = "0%"
+            spriteX = "0%";
             break;
         case "left":
-            spriteX = "66.666%"
+            spriteX = "66.666%";
             break;
         case "right":
-            spriteX = "100%"
+            spriteX = "100%";
             break;
         default:
     };
-    if (playerState === "standing") {
+    if (playerState !== "walking") {
         clearInterval(walkingInterval);
         walkingInterval = null;
         $("#player").css("background-position", spriteX + " 0%");
@@ -272,21 +282,28 @@ function interactOrSelect() {
 }
 
 function takeItem(itemId) {
+    var item = null;
     if (itemId !== "false") {
-        var item = claimableObjects[currentLocation][itemId];
+        item = claimableObjects[currentLocation][itemId];
         // Place item into appropriate location... inventory or pokedex 
         if (item.type === "pokemon") {
-            pokedex.push(item);
+            pokedex[item.pokeId].owned = true;
+            ownedPokemon = pokedex.filter(item => item.owned);
         } else {
             inventory.push(item);
         }
-        // Delete item from claimableObjects
-        claimableObjects[currentLocation][itemId].status = "claimed";
-        // Remove item from the gameboard [y, x]
+        // Update item status in claimableObjects
+        item.status = "claimed";
+        // Remove item from the map & screen
         var itemY = item.location[0];
         var itemX = item.location[1];
         mapLocations[currentLocation][0][itemY][itemX] = 1;
-        $("#" + item.id).remove();
+        $("#" + item.name).remove();
+        // If item required confirmation, restore game controls
+        if (item.confirmText) { 
+            cancelOrBack();
+            setGameControls(); 
+        }
     } 
 }
 
@@ -298,6 +315,7 @@ function showText(text) {
 
 function cancelOrBack() {
     $("#textBox").hide();
+    $("#battleScreen").hide();
     playerState = "standing";
 }
 
@@ -342,15 +360,13 @@ function chooseMenuItem(options, callback) {
                 break;
             case 75:
                 //"k" button -> A. Return data-value of item with the "selectedOption" class.
-                callback(options[selectedOption].getAttribute("data-value"));
-                cancelOrBack();
                 $(document).off("keydown");
-                setGameControls();
+                callback(options[selectedOption].getAttribute("data-value"));
                 break;
             case 76:
                 //"l" button -> B
-                cancelOrBack();
                 $(document).off("keydown");
+                cancelOrBack();
                 setGameControls();
                 break;
             default:
@@ -364,8 +380,126 @@ function buttonPress(button) {
 }
 
 function triggerFight() {
-    console.log("This square can trigger a fight");
-    //extra line to make this foldable
+    var ranNum = Math.random();
+    var ranPokemon = 0;
+    var turn = 0;
+
+    // This function allows players to make moves, and gets called over and over
+    // until one Pokemon is defeated.
+    function takeTurn(moveIndex) {
+        var computerMove = null;
+
+        if (moveIndex) {
+            $("#friendlyPokemonImage").effect("bounce");
+            ranPokemon.currentHP -= pokeMoves[moveIndex].damage;
+            var healthBarWidth = 8.1 * (ranPokemon.currentHP / ranPokemon.maxHP);
+            setTimeout(function() {
+                $("#enemyPokemonHealthBar").css("width", healthBarWidth + "vw");
+            }, 500);
+        }
+
+        if (ranPokemon.currentHP <= 0) {
+            pokemonDefeated(ranPokemon, true);
+            return;
+        } else if (myPokemon.currentHP <= 0) {
+            pokemonDefeated(myPokemon, false);
+            return;
+        }
+
+        if (turn === 0) {
+            // Human player goes first
+            $("#battleText").hide();
+            $("#battleOptions").show();
+            chooseMenuItem(document.getElementById("moveOptions").children, takeTurn);
+            turn++;
+        } else if (turn === 1) {
+            // Computer goes second
+            setTimeout(function() {
+                computerMove = computerMoveAI(ranPokemon);
+                $("#battleOptions").hide();
+                $("#battleText").show();
+                $("#battleText").text(ranPokemon.name + " used " + pokeMoves[computerMove].name + "!");
+                $("#enemyPokemonImage").effect("bounce");
+                myPokemon.currentHP -= pokeMoves[computerMove].damage;
+                var healthBarWidth = 8.1 * (myPokemon.currentHP / myPokemon.maxHP);
+                setTimeout(function() {
+                    $("#friendlyPokemonHealthBar").css("width", healthBarWidth + "vw");
+                }, 500);
+                turn--;
+                $(document).on("keydown", function(event) {
+                    if (event.keyCode === 75) {
+                        takeTurn();
+                    }
+                });
+            }, 1500);
+        }
+    }
+
+    function pokemonDefeated(pokemon, enemy) {
+        $("#battleOptions").hide();
+        $("#battleText").show();
+        $("#battleText").text(pokemon.name + " has fainted!");
+        if (enemy) {
+            $("#enemyPokemonImage").hide("shake");
+        } else {
+            $("#friendlyPokemonImage").hide("pulsate");
+        }
+
+        $(document).on("keydown", function(event) {
+                if (event.keyCode === 75) {
+                    if (enemy) {
+                        cancelOrBack();
+                    } else {
+                        loadNewMapArea("pallet");
+                        cancelOrBack();
+                    }
+                    $(document).off();
+                    setGameControls();
+                }
+            });
+    }
+
+    if (ranNum < 0.15) {
+        playerState = "locked";
+        walkingAnimation(playerDirection);
+        ranPokemon = Math.round(Math.random() * 3) + 3;
+        ranPokemon = Object.assign({}, pokedex[ranPokemon]);
+        $("#enemyPokemonName").text(ranPokemon.name.toUpperCase());
+        $("#enemyPokemonHealthBar").css("width", "8.1vw"); //this is a magic number
+        $("#enemyPokemonLevel").text(ranPokemon.level);
+        $("#enemyPokemonImage").attr("src", ranPokemon.frontImage);
+        $("#enemyPokemonImage").show();
+        var myPokemon = ownedPokemon[0];
+        $("#friendlyPokemonName").text(myPokemon.name.toUpperCase());
+        var healthBarWidth = 8.1 * (myPokemon.currentHP / myPokemon.maxHP);
+        $("#friendlyPokemonHealthBar").css("width", healthBarWidth + "vw");
+        $("#friendlyPokemonLevel").text(myPokemon.level);
+        $("#friendlyPokemonHealthNum").html(myPokemon.currentHP + " &nbsp; &nbsp; &nbsp; &nbsp;" + myPokemon.maxHP)
+        $("#friendlyPokemonImage").attr("src", myPokemon.backImage);
+        var moveDivs = $("#moveOptionsText").children();
+        moveDivs.each(function(index) {
+            if (!isNaN(myPokemon.moves[index])) {
+                this.innerText = pokeMoves[myPokemon.moves[index]].name;
+                this.setAttribute("data-value", myPokemon.moves[index]);    
+            } else {
+                this.innerText = "--";
+                this.setAttribute("data-value", "invalid");
+            }
+        });
+        $("#battleText").text("A wild " + ranPokemon.name + " appears!");
+        $("#battleScreen").show();
+        $(document).off("keydown");
+        $(document).on("keydown", function(event) {
+            if (event.keyCode === 75) {
+                takeTurn();
+            }
+        });
+    }
+}
+
+function computerMoveAI(pokemon) {
+    var ranMoveIndex = Math.round(Math.random() * (pokemon.moves.length - 1));
+    return pokemon.moves[ranMoveIndex];
 }
 
 function startMenu() {

@@ -58,7 +58,8 @@ var claimableObjects = {
     oakLab : [
         { 
             type : "pokemon",
-            id : "bulbasaur",
+            name : "bulbasaur",
+            pokeId : 0,
             location : [4, 7],
             background : "img/objects/pokeball.png",
             confirmText : "Claim Bulbasaur as your first Pokemon?",
@@ -66,7 +67,8 @@ var claimableObjects = {
         },
         { 
             type : "pokemon",
-            id : "squirtle",
+            name : "squirtle",
+            pokeId : 1,
             location : [4, 8],
             background : "img/objects/pokeball.png",
             confirmText : "Claim Squirtle as your first Pokemon?",
@@ -74,7 +76,8 @@ var claimableObjects = {
         },
         { 
             type : "pokemon",
-            id : "charmander",
+            name : "charmander",
+            pokeId : 2,
             location : [4, 9],
             background : "img/objects/pokeball.png",
             confirmText : "Claim Charmander as your first Pokemon?",
