@@ -9,7 +9,7 @@ var allNPCs = {
     pallet : [
         { 
             name : "Jane",
-            location : [8, 4], 
+            location : [9, 5], 
             background : "img/npcs/pallet/60.png", // 16px wide, 18px tall
             facing : "right", 
             trainer : false, 
@@ -17,7 +17,7 @@ var allNPCs = {
         },
         { 
             name : "John",
-            location : [15, 10],
+            location : [16, 11],
             background : "img/npcs/pallet/61.png", 
             facing : "down", 
             trainer : false, 
@@ -27,18 +27,18 @@ var allNPCs = {
     ashHouse1 : [
         {
             name : "Mom",
-            location : [4, 5], 
+            location : [5, 6], 
             background : "img/npcs/ashHouse1/60.png", 
             facing : "down", 
             trainer : false, 
-            dialog : "You gotta eat! Who do you think you are?",
+            dialog : "Mom: You gotta eat! Who do you think you are?",
             healer : true
         }
     ],
     rivalHouse : [
         {
             name : "rivalSister",
-            location : [3, 2], 
+            location : [4, 3], 
             background : "img/npcs/rivalHouse/60.png", // 18px wide, 19px tall
             facing : "right", 
             trainer : false, 
@@ -48,7 +48,7 @@ var allNPCs = {
     oakLab : [
         {
             name : "nerdDude1",
-            location : [10, 2], 
+            location : [11, 3], 
             background : "img/npcs/oakLab/60.png", // 18px wide, 19px tall
             facing : "left", 
             trainer : false, 
@@ -56,7 +56,7 @@ var allNPCs = {
         },
         {
             name : "nerdDude2",
-            location : [9, 8], 
+            location : [10, 9], 
             background : "img/npcs/oakLab/60.png", // 18px wide, 19px tall
             facing : "left", 
             trainer : false, 
@@ -64,7 +64,7 @@ var allNPCs = {
         },
         {
             name : "nerdGirl",
-            location : [10, 1], 
+            location : [11, 2], 
             background : "img/npcs/oakLab/61.png", // 18px wide, 19px tall
             facing : "down", 
             trainer : false, 
@@ -72,14 +72,40 @@ var allNPCs = {
         },
         {
             name : "profOak",
-            location : [2, 5], 
+            location : [3, 6], 
             background : "img/npcs/oakLab/62.png", // 18px wide, 19px tall
             facing : "down", 
             trainer : false, 
-            dialog : "It's dangerous to go alone! Take a Pokemon."
+            dialog : "Prof Oak: It's dangerous to go alone! Take a Pokemon."
         }
     ],
-    route1 : []
+    route1 : [
+        {
+            name : "Doug",
+            location : [26, 4],
+            background : "img/npcs/route1/60.png",
+            facing : "down",
+            trainer : true,
+            dialog : "How is this different from dog fighting? Hahaha!"
+        },
+        {
+            name : "Bert",
+            location : [14, 14],
+            background : "img/npcs/route1/61.png",
+            facing : "left",
+            trainer : true,
+            dialog : "You don't stand a chance!"
+        },
+        {
+            name : "Mom",
+            location : [3, 8], 
+            background : "img/npcs/route1/62.png", 
+            facing : "right", 
+            trainer : false, 
+            dialog : "Mom: Wait, how did I get here?",
+            healer : true
+        }
+    ]
 }
 
 

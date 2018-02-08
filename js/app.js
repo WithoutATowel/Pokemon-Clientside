@@ -11,7 +11,6 @@
 // Save game
 
 // TODAY
-// Add healing (talk to Mom)
 // Add NPCs to Route1
 // Add Pokemaster battles
 // Add NPC movement
@@ -180,8 +179,8 @@ function loadNPCsAndObjects(location) {
         currentNPCs.forEach(function(item) {
             $("#screen").append("<div class='npc' id='" + item.name + "'></div>");
             $("#" + item.name).css("background-image", "url(" + item.background + ")");
-            var npcPosY = (item.location[0] * squareSize) + "vw";
-            var npcPosX = (item.location[1] * squareSize) + "vw";
+            var npcPosY = ((item.location[0] - 1) * squareSize) + "vw";
+            var npcPosX = ((item.location[1] - 1) * squareSize) + "vw";
             $("#" + item.name).css("top", npcPosY);
             $("#" + item.name).css("left", npcPosX);
         });
@@ -269,9 +268,18 @@ function interactOrSelect() {
     } else if (targetSquare.toString()[0] === "6") {
         // NPCs
         item = allNPCs[currentLocation][parseInt(targetSquare.toString()[1])];
-        showText(item.dialog);
-        if (item.healer) {
+        var injuredPokemon = ownedPokemon.filter(function(item) {
+                if (item.currentHP < item.maxHP) {
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+        if (item.healer && injuredPokemon.length > 0) {
             ownedPokemon.forEach(item => item.currentHP = item.maxHP);
+            showText(item.name + ": Here's some chocolate for your injured Pokemon. There you go, all better!");
+        } else {
+            showText(item.dialog);
         }
     } else if (targetSquare.toString()[0] === "7") {
         // Claimable items
