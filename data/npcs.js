@@ -86,7 +86,8 @@ var allNPCs = {
             background : "img/npcs/route1/60.png",
             facing : "down",
             trainer : true,
-            dialog : "How is this different from dog fighting? Hahaha!"
+            dialog : "How is this different from dog fighting? Hahaha!",
+            defeated : false
         },
         {
             name : "Bert",
@@ -94,7 +95,8 @@ var allNPCs = {
             background : "img/npcs/route1/61.png",
             facing : "left",
             trainer : true,
-            dialog : "You don't stand a chance!"
+            dialog : "You don't stand a chance!",
+            defeated : false
         },
         {
             name : "Mom",
@@ -104,6 +106,48 @@ var allNPCs = {
             trainer : false, 
             dialog : "Mom: Wait, how did I get here?",
             healer : true
+        }
+    ],
+    finalFourLair : [
+        {
+            name : "DeVito",
+            location : [2, 4],
+            background : "img/npcs/finalFourLair/60.png",
+            facing : "down",
+            trainer : true,
+            dialog : "Alright, let's do this...",
+            finalFour : true,
+            defeated : false
+        },
+        {
+            name : "Dee",
+            location : [2, 5],
+            background : "img/npcs/finalFourLair/61.png",
+            facing : "down",
+            trainer : true,
+            dialog : "What? Did you say something?",
+            finalFour : true,
+            defeated : false
+        },
+        {
+            name : "Knuckles",
+            location : [2, 6], 
+            background : "img/npcs/finalFourLair/62.png", 
+            facing : "down", 
+            trainer : true, 
+            dialog : "Don't touch my hair, dude.",
+            finalFour : true,
+            defeated : false
+        },
+        {
+            name : "Walter",
+            location : [2, 7], 
+            background : "img/npcs/finalFourLair/63.png", 
+            facing : "down", 
+            trainer : true, 
+            dialog : "Say.  My.  Name.",
+            finalFour : true,
+            defeated : false
         }
     ]
 }

@@ -13,9 +13,9 @@
 
 // TODAY
 // Add "gym" at end of route1
-// Add NPC movement
 // Prevent player from taking more than 1 Pokemon
 // Prevent player from leaving Pallet without a pokemon w/ positive health. Show a warning message.
+// Add NPC movement
 // Add leveling up
 // Incorporate Pokemon stats into battle mode
 // Make Growl do something
@@ -37,7 +37,7 @@ var inventory = [];
 var ownedPokemon = pokedex.filter(item => item.owned);
 var myPokemon = null;
 var ranPokemon = null;
-var opponent = "";
+var enemyTrainer = null;
 var turn = 0;
 
 function movePlayer(direction) {
@@ -283,7 +283,7 @@ function interactOrSelect() {
             ownedPokemon.forEach(item => item.currentHP = item.maxHP);
             showText(item.name + ": Here's some chocolate for your injured Pokemon. There you go, all better!");
         } else if (item.trainer) {
-            opponent = item.name;
+            enemyTrainer = allNPCs[currentLocation][parseInt(targetSquare.toString()[1])];
             showText(item.dialog);
             $(document).off();
             setTimeout(enterFightMode, 1000);
@@ -431,8 +431,8 @@ function enterFightMode() {
             this.setAttribute("data-value", "invalid");
         }
     });
-    if (opponent) {
-        $("#battleText").text("Poketrainer " + opponent + " sent out " + ranPokemon.name + "!");
+    if (enemyTrainer) {
+        $("#battleText").text("Poketrainer " + enemyTrainer.name + " sent out " + ranPokemon.name + "!");
     } else { 
         $("#battleText").text("A wild " + ranPokemon.name + " appears!");
     }
@@ -499,30 +499,30 @@ function takeTurn(moveIndex) {
     }
 }
 
-function pokemonDefeated(pokemon, enemy) {
+function pokemonDefeated(defeatedPokemon, playerWonBool) {
     $("#battleOptions").hide();
     $("#battleText").show();
-    $("#battleText").text(pokemon.name + " has fainted!");
-    if (enemy) {
+    $("#battleText").text(defeatedPokemon.name + " has fainted!");
+    if (playerWonBool) {
         $("#enemyPokemonImage").hide("shake");
     } else {
         $("#friendlyPokemonImage").hide("pulsate");
     }
-    
 
     $(document).on("keydown", function(event) {
         if (event.keyCode === 75) {
-            if (enemy) {
+            if (playerWonBool) {
                 cancelOrBack();
-                if (opponent) {
-                    opponent = null;
+                if (enemyTrainer) {
                     showText("How could I have lost?!");
-                    return; 
+                    enemyTrainer.defeated = true;
+                    checkWin(); 
                 }
             } else {
                 loadNewMapArea("pallet");
                 cancelOrBack();
             }
+            enemyTrainer = null;
             $(document).off();
             setGameControls();
         }
@@ -607,6 +607,19 @@ function setGameControls() {
     });
 }
 
+function checkWin() {
+    var defeatedBosses = allNPCs["finalFourLair"].filter(function(item) {
+        if (item.defeated) {
+            return true;
+        } else {
+            return false;
+        }
+    });
+    if (defeatedBosses.length === 4) {
+        $("#winScreen").show("scale");
+    }
+}
+
 // function npcWander() {
 //     var walkOrStay = Math.random();
 //     var 
@@ -615,4 +628,5 @@ function setGameControls() {
 $(document).ready(function() {
     loadNPCsAndObjects(currentLocation);
     setGameControls();
+    $("#winScreen").hide();
 });
