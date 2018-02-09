@@ -1,14 +1,14 @@
 // LATER
-// create "keyboard" menu for entering your player's name. Store it in localStorage.
-// add jump animation for ledges
 // make map transitions smoother
 // No player movement while new map is loading
+// Save game + load game
+// "Turn Gameboy off/on"
+// create "keyboard" menu for entering your player's name. Store it in localStorage.
+
 // update maps.js --> JSON, start that server thing, load data using AJAX
 // Fix walking bug: https://stackoverflow.com/questions/29279805/keydown-doesnt-continuously-fire-when-pressed-and-hold?rq=1
 // Put a book on the table in rivalHouse?
 // Intro animation
-// "Turn Gameboy off/on"
-// Save game
 // Clean code!!
 
 // TODAY
@@ -17,9 +17,9 @@
 // Add NPC movement
 
 // Incorporate Pokemon stats into battle mode
-// Make Growl do something
 // Randomize pokestats
 // Add some RNG to damage per attack
+// Make Growl do something
 
 var squareSize = 2.5;
 var playerY = 7; 
@@ -499,7 +499,12 @@ function takeTurn(moveIndex) {
             $("#battleText").show();
             $("#battleText").text(ranPokemon.name + " used " + pokeMoves[computerMove].name + "!");
             $("#enemyPokemonImage").effect("bounce");
-            myPokemon.currentHP -= pokeMoves[computerMove].damage;
+            var damage = pokeMoves[computerMove].damage;
+            if (damage > myPokemon.currentHP) {
+                myPokemon.currentHP = 0;
+            } else {
+                myPokemon.currentHP -= damage;
+            }
             var healthBarWidth = 8.1 * (myPokemon.currentHP / myPokemon.maxHP);
             setTimeout(function() {
                 $("#friendlyPokemonHealthBar").css("width", healthBarWidth + "vw");
