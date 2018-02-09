@@ -16,7 +16,6 @@
 // Clean code!!
 
 // TODAY
-// Fix barrier to Route1, add text for defeat
 // Fix menu select bug
 // make map transitions smoother
 // No player movement while new map is loading
@@ -354,6 +353,9 @@ function takeItem(itemId) {
             cancelOrBack();
             setGameControls(); 
         }
+    } else {
+        cancelOrBack();
+        setGameControls();
     } 
 }
 
