@@ -17,8 +17,6 @@
 // DONE
 
 // TODAY
-// Incorporate Pokemon stats into battle mode
-// Add some RNG to damage per attack
 // Randomize pokestats
 // Add music + sound effects + mute button
 
@@ -35,6 +33,7 @@ $(document).ready(function() {
     $.getJSON("data/pokedex.json").done(function(data) {
         pokedex = data.pokedex;
         pokeMoves = data.pokeMoves;
+        myPokemon = instantiatePokemon(0); //DON'T FORGET TO REMOVE THIS
     });
     $.getJSON("data/interactiveObjects.json").done(function(data) {
         staticObjects = data.staticObjects;
@@ -56,7 +55,6 @@ var currentLocation = "pallet";
 var mapWidth = 0;
 var mapHeight = 0;
 var inventory = [];
-var ownedPokemon = [];
 var myPokemon = null;
 var ranPokemon = null;
 var enemyTrainer = null;
@@ -183,11 +181,10 @@ function checkPermittedMove(direction) {
         // Square is taken by a claimable object
         return false;
     } else if (targetSquare.toString()[0] === "8") {
-        ownedPokemon = pokedex.filter(item => item.owned);
-        if (ownedPokemon.length === 0) {
+        if (myPokemon === null) {
             showText("You'll need a pokemon to leave town. Find Professor Oak.");
             return false;
-        } else if (ownedPokemon[0].currentHP === 0) {
+        } else if (myPokemon.currentHP === 0) {
             showText("Your pokemon has 0 HP! Talk to Mom to heal.");
             return false;
         } else {
@@ -328,15 +325,8 @@ function interactOrSelect() {
     } else if (targetSquare.toString()[0] === "6") {
         // NPCs
         item = allNPCs[currentLocation][parseInt(targetSquare.toString()[1])];
-        var injuredPokemon = ownedPokemon.filter(function(item) {
-                if (item.currentHP < item.maxHP) {
-                    return true;
-                } else {
-                    return false;
-                }
-            });
-        if (item.healer && injuredPokemon.length > 0) {
-            ownedPokemon.forEach(item => item.currentHP = item.maxHP);
+        if (item.healer && myPokemon.currentHP < myPokemon.maxHP) {
+            myPokemon.currentHP = myPokemon.maxHP;
             showText(item.name + ": Here's some chocolate for your injured Pokemon. There you go, all better!");
         } else if (item.trainer) {
             enemyTrainer = allNPCs[currentLocation][parseInt(targetSquare.toString()[1])];
@@ -369,8 +359,7 @@ function takeItem(itemId) {
         item = claimableObjects[currentLocation][itemId];
         // Place item into appropriate location... inventory or pokedex 
         if (item.type === "pokemon") {
-            pokedex[item.pokeId].owned = true;
-            ownedPokemon = pokedex.filter(item => item.owned);
+            myPokemon = instantiatePokemon(item.pokeId);
         } else {
             inventory.push(item);
         }
@@ -378,7 +367,6 @@ function takeItem(itemId) {
         claimableObjects[currentLocation].forEach(function(obj) {
             obj.status = "locked";
         });
-        item.status = "claimed";
         // Remove item from the map & screen
         var itemY = item.location[0];
         var itemX = item.location[1];
@@ -394,6 +382,25 @@ function takeItem(itemId) {
         cancelOrBack();
         setGameControls();
     } 
+}
+
+function instantiatePokemon(pokeId) {
+    var myNewPokemon = Object.assign({}, pokedex[pokeId]);
+    var attackBonus = Math.round(Math.random() * 3) - 1; 
+    var defenseBonus = Math.round(Math.random() * 3) - 1;
+    var levelBonus = (pokeId === 0 || pokeId === 1 || pokeId === 2) ? 0 : Math.round(Math.random());
+
+    myNewPokemon.attack += attackBonus;
+    myNewPokemon.defense += defenseBonus;
+    myNewPokemon.level += levelBonus;
+
+    var maxHPBonus = (myNewPokemon.level - 4) * (Math.round(Math.random() * 3) - 1);
+    var newMaxHP = pokedex[pokeId].maxHP + 2 * myNewPokemon.level + maxHPBonus;
+
+    myNewPokemon.maxHP = newMaxHP;
+    myNewPokemon.currentHP = newMaxHP;
+
+    return myNewPokemon
 }
 
 function showText(text) {
@@ -471,9 +478,7 @@ function buttonPress(button) {
 function enterFightMode() {
     turn = 0;
     walkingAnimation(playerDirection);
-    ranPokemon = Math.round(Math.random() * 3) + 3;
-    ranPokemon = Object.assign({}, pokedex[ranPokemon]);
-    myPokemon = ownedPokemon[0];
+    ranPokemon = instantiatePokemon(Math.round(Math.random() * 3) + 3);
     $("#enemyPokemonName").text(ranPokemon.name.toUpperCase());
     $("#enemyPokemonHealthBar").css("width", "8.1vw"); //this is a magic number
     $("#enemyPokemonLevel").text(ranPokemon.level);
