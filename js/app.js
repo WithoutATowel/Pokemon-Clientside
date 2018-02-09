@@ -8,17 +8,18 @@
 // Save game + load game
 // "Turn Gameboy off/on"
 // Intro animation
-// Fix bug with facing direction & map transitions
 // Start game in Ashe's room?
 // Add dialog beyond a single line of text?
 // create "keyboard" menu for entering your player's name. Store it in localStorage.
 // Fix walking bug: https://stackoverflow.com/questions/29279805/keydown-doesnt-continuously-fire-when-pressed-and-hold?rq=1
 // Clean code!!
 
-// TODAY
-// Fix menu select bug
-// make map transitions smoother
+// DONE
 // No player movement while new map is loading
+// Fix bug with facing direction & map transitions
+
+// TODAY
+// make map transitions smoother
 // update maps.js --> JSON, start that server thing, load data using AJAX
 // Add entry animations for pokemon in fight modes
 // Incorporate Pokemon stats into battle mode
@@ -68,6 +69,7 @@ function movePlayer(direction) {
             };
             var squareType = mapLocations[currentLocation][0][playerY][playerX];
             if (typeof squareType === "string") {
+                    playerState = "locked";
                     loadNewMapArea(squareType);
                 } else if (squareType === 0) {
                     walkingAnimation(direction);
@@ -100,9 +102,11 @@ function movePlayer(direction) {
 
 function checkPermittedMove(direction) {
     var targetSquare = null;
+    //THIS CHECKS WHETHER targetSquare IS A STRING 4X. REFACTOR.
     switch (direction) {
         case "up":
-            //Make sure player isn't already at the top of the map
+            // Make sure player isn't already at the top of the map, but let them move if 
+            // the next square leads to a different map.
             targetSquare = mapLocations[currentLocation][0][playerY - 1][playerX];
             if (typeof targetSquare === "string"){
                 return true;
@@ -111,7 +115,8 @@ function checkPermittedMove(direction) {
             }
             break;
         case "down":
-            //Make sure player isn't already at the bottom of the map
+            // Make sure player isn't already at the bottom of the map, but let them move if 
+            // the next square leads to a different map.
             targetSquare = mapLocations[currentLocation][0][playerY + 1][playerX];
             if (typeof targetSquare === "string"){
                 return true;
@@ -120,7 +125,8 @@ function checkPermittedMove(direction) {
             }
             break;
         case "left":
-            //Make sure player isn't already at the left edge of the map
+            // Make sure player isn't already at the left edge of the map, but let them move if 
+            // the next square leads to a different map.
             targetSquare = mapLocations[currentLocation][0][playerY][playerX - 1];
             if (typeof targetSquare === "string"){
                 return true;
@@ -129,7 +135,8 @@ function checkPermittedMove(direction) {
             }
             break;
         case "right":
-            //Make sure player isn't already at the right edge of the map
+            // Make sure player isn't already at the right edge of the map, but let them move if 
+            // the next square leads to a different map.
             targetSquare = mapLocations[currentLocation][0][playerY][playerX + 1];
             if (typeof targetSquare === "string"){
                 return true;
@@ -168,7 +175,7 @@ function checkPermittedMove(direction) {
             return true;
         }
     } else {
-        // Nothing disqualifies the square
+        // Default to true. Nothing disqualifies the square.
         return true;
     }
 }
@@ -178,20 +185,28 @@ function loadNewMapArea(name) {
     currentLocation = name;
     mapWidth = mapLocations[currentLocation][0][1].length - 2;
     mapHeight = mapLocations[currentLocation][0].length - 2;
+    playerDirection = mapLocations[currentLocation][1][lastLocation][2];
+    console.log(playerDirection);
+    walkingAnimation(playerDirection);
     $("#player").hide();
-    $("#screen").css("background-image", "url(img/" + name + ".png)");
-    $("#screen").css("width", (mapWidth * squareSize) + "vw ");
-    $("#screen").css("height", (mapHeight * squareSize) + "vw");
-    playerY = mapLocations[currentLocation][1][lastLocation][0];
-    playerX = mapLocations[currentLocation][1][lastLocation][1];
-    var mapY = ((6 - playerY) * squareSize) + "vw";
-    var mapX = ((6 - playerX) * squareSize) + "vw";
-    $("#screen").css("top", mapY);
-    $("#screen").css("left", mapX);
-    loadNPCsAndObjects(currentLocation);
+    $("#screen").hide("clip");
     setTimeout(function() {
-        $("#player").show();
-    }, 400);
+        $("#screen").css("background-image", "url(img/" + name + ".png)");
+        $("#screen").css("width", (mapWidth * squareSize) + "vw ");
+        $("#screen").css("height", (mapHeight * squareSize) + "vw");
+        playerY = mapLocations[currentLocation][1][lastLocation][0];
+        playerX = mapLocations[currentLocation][1][lastLocation][1];
+        var mapY = ((6 - playerY) * squareSize) + "vw";
+        var mapX = ((6 - playerX) * squareSize) + "vw";
+        $("#screen").css("top", mapY);
+        $("#screen").css("left", mapX);
+        loadNPCsAndObjects(currentLocation);
+        $("#screen").show("clip");
+        setTimeout(function() {
+            $("#player").show();
+            playerState = "standing";
+        }, 400);
+    }, 450);
 }
 
 function loadNPCsAndObjects(location) {

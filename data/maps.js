@@ -35,10 +35,10 @@ var mapLocations = {
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
         ],
         {  // Starting positions for Ashe, depending on entry point.
-            ashHouse1: [7, 6],
-            rivalHouse: [7, 14],
-            oakLab: [13, 13],
-            route1: [2, 11]
+            ashHouse1: [7, 6, "down"],
+            rivalHouse: [7, 14, "down"],
+            oakLab: [13, 13, "down"],
+            route1: [2, 11, "down"]
         }
     ],
     ashHouse1 : [
@@ -55,8 +55,8 @@ var mapLocations = {
             [1, 1, 1, "pallet", "pallet", 1, 1, 1, 1, 1]
         ],
         {
-            pallet: [8, 3],
-            ashHouse2: [2, 7]
+            pallet: [8, 3, "up"],
+            ashHouse2: [2, 7, "left"]
         }
     ],
     ashHouse2 : [
@@ -73,7 +73,7 @@ var mapLocations = {
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
         ],
         {
-            ashHouse1: [2, 7]
+            ashHouse1: [2, 7, "left"]
         }
     ],
     rivalHouse : [
@@ -90,7 +90,7 @@ var mapLocations = {
             [1, 1, 1, "pallet", "pallet", 1, 1, 1, 1, 1]
         ],
         {
-            pallet: [8, 3]
+            pallet: [8, 3, "up"]
         }
     ],
     oakLab : [
@@ -111,7 +111,7 @@ var mapLocations = {
             [1, 1, 1, 1, 1, "pallet", "pallet", 1, 1, 1, 1, 1]
         ],
         {
-            pallet: [12, 5]
+            pallet: [12, 5, "up"]
         }
     ],
     route1 : [
@@ -156,8 +156,8 @@ var mapLocations = {
             [1, 1, 1, 1, 1, 1, 1, 1, 1, "pallet", "pallet", 1, 1, 1, 1, 1, 1, 1, 1, 1]
         ],
         {
-            pallet : [36, 9],
-            finalFourLair : [1, 9]
+            pallet : [36, 9, "up"],
+            finalFourLair : [1, 9, "down"]
         }
     ],
     finalFourLair : [
@@ -177,7 +177,7 @@ var mapLocations = {
             [1, 1, 1, 1, 1, "route1", "route1", 1, 1, 1, 1, 1]
         ],
         {
-            route1 : [11, 5]
+            route1 : [11, 5, "up"]
         }
     ]
 };
