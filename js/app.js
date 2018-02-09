@@ -28,21 +28,17 @@ $(document).ready(function() {
     // Load data as global variables
     $.getJSON("data/maps.json").done(function(data) {
         mapLocations = data.mapLocations;
-        console.log("success: maps");
     });
     $.getJSON("data/npcs.json").done(function(data) {
         allNPCs = data.allNPCs;
-        console.log("success: npcs");
     });
     $.getJSON("data/pokedex.json").done(function(data) {
         pokedex = data.pokedex;
         pokeMoves = data.pokeMoves;
-        console.log("success: pokemon");
     });
     $.getJSON("data/interactiveObjects.json").done(function(data) {
         staticObjects = data.staticObjects;
         claimableObjects = data.claimableObjects;
-        console.log("success: objects");
         loadNPCsAndObjects(currentLocation);
     });
     setGameControls();
@@ -209,7 +205,6 @@ function loadNewMapArea(name) {
     mapWidth = mapLocations[currentLocation][0][1].length - 2;
     mapHeight = mapLocations[currentLocation][0].length - 2;
     playerDirection = mapLocations[currentLocation][1][lastLocation][2];
-    console.log(playerDirection);
     walkingAnimation(playerDirection);
     $("#player").hide();
     $("#screen").hide("clip");
@@ -227,7 +222,11 @@ function loadNewMapArea(name) {
         $("#screen").show("clip");
         setTimeout(function() {
             $("#player").show();
-            playerState = "standing";
+            if ($("#textBox").css("display") === "none") {
+                playerState = "standing";
+            } else {
+                playerState = "locked";
+            }
         }, 400);
     }, 450);
 }
@@ -518,17 +517,20 @@ function enterFightMode() {
 // until one Pokemon is defeated.
 function takeTurn(moveIndex) {
     var computerMove = null;
+    var damage = 0;
 
     if (moveIndex) {
         $("#friendlyPokemonImage").effect("bounce");
         $("#battleOptions").hide();
-        ranPokemon.currentHP -= pokeMoves[moveIndex].damage;
+        damage = Math.round(((2 * myPokemon.level) / 100) * (myPokemon.attack / ranPokemon.defense) * pokeMoves[moveIndex].damage);
+        ranPokemon.currentHP -= damage;
         var healthBarWidth = 8.1 * (ranPokemon.currentHP / ranPokemon.maxHP);
         setTimeout(function() {
             $("#enemyPokemonHealthBar").css("width", healthBarWidth + "vw");
         }, 500);
     }
 
+    // Check whether one of the pokemon has won the fight
     if (ranPokemon.currentHP <= 0) {
         pokemonDefeated(ranPokemon, true);
         return;
@@ -546,11 +548,12 @@ function takeTurn(moveIndex) {
     } else if (turn === 1) {
         // Computer goes second
         setTimeout(function() {
-            computerMove = computerMoveAI(ranPokemon);
+            var ranIndex = Math.round(Math.random() * (ranPokemon.moves.length - 1));
+            computerMove = ranPokemon.moves[ranIndex];
             $("#battleText").show();
             $("#battleText").text(ranPokemon.name + " used " + pokeMoves[computerMove].name + "!");
             $("#enemyPokemonImage").effect("bounce");
-            var damage = pokeMoves[computerMove].damage;
+            damage = Math.round(((2 * ranPokemon.level) / 100) * (ranPokemon.attack / myPokemon.defense) * pokeMoves[computerMove].damage);
             if (damage > myPokemon.currentHP) {
                 myPokemon.currentHP = 0;
             } else {
@@ -600,11 +603,6 @@ function pokemonDefeated(defeatedPokemon, playerWonBool) {
             setGameControls();
         }
     });
-}
-
-function computerMoveAI(pokemon) {
-    var ranMoveIndex = Math.round(Math.random() * (pokemon.moves.length - 1));
-    return pokemon.moves[ranMoveIndex];
 }
 
 function startMenu() {

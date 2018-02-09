@@ -52,7 +52,7 @@
             "level" : 4,
             "moves" : [0],
             "attack" : 8,
-            "defense" : 8,
+            "defense" : 10,
             "type" : "normal",
             "owned" : false,
             "frontImage" : "img/pokemon/front/pidgey.png"
@@ -63,7 +63,7 @@
             "currentHP" : 12,
             "level" : 4,
             "moves" : [0, 2],
-            "attack" : 8,
+            "attack" : 10,
             "defense" : 8,
             "type" : "normal",
             "owned" : false,
@@ -75,8 +75,8 @@
             "currentHP" : 12,
             "level" : 4,
             "moves" : [4, 2],
-            "attack" : 8,
-            "defense" : 8,
+            "attack" : 9,
+            "defense" : 9,
             "type" : "electric",
             "owned" : false,
             "frontImage" : "img/pokemon/front/pikachu.png"
@@ -87,8 +87,8 @@
             "currentHP" : 12,
             "level" : 4,
             "moves" : [5, 0],
-            "attack" : 8,
-            "defense" : 8,
+            "attack" : 9,
+            "defense" : 9,
             "type" : "bug",
             "owned" : false,
             "frontImage" : "img/pokemon/front/caterpie.png"
@@ -97,7 +97,7 @@
     "pokeMoves" : [
         {
             "name" : "Tackle",
-            "damage" : 5
+            "damage" : 40
         },
         {
             "name" : "Growl",
@@ -105,19 +105,19 @@
         },
         {
             "name" : "Tail Whip",
-            "damage" : 4
+            "damage" : 35
         },
         { 
             "name" : "Scratch",
-            "damage" : 5
+            "damage" : 40
         },
         {    
             "name" : "Thunder Shock",
-            "damage" : 4
+            "damage" : 35
         },
         { 
             "name" : "String Shot",
-            "damage" : 3
+            "damage" : 30
         }
     ]
 }
