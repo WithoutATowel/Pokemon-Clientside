@@ -15,11 +15,8 @@
 // Clean code!!
 
 // DONE
-// No player movement while new map is loading
-// Fix bug with facing direction & map transitions
 
 // TODAY
-// make map transitions smoother
 // update maps.js --> JSON, start that server thing, load data using AJAX
 // Add entry animations for pokemon in fight modes
 // Incorporate Pokemon stats into battle mode
@@ -27,6 +24,31 @@
 // Randomize pokestats
 // Add music + sound effects + mute button
 
+$(document).ready(function() {
+    $("#winScreen").hide();
+
+    // Load data as global variables
+    $.getJSON("data/maps.json").done(function(data) {
+        mapLocations = data.mapLocations;
+        console.log("success: maps");
+    });
+    $.getJSON("data/npcs.json").done(function(data) {
+        allNPCs = data.allNPCs;
+        console.log("success: npcs");
+    });
+    $.getJSON("data/pokedex.json").done(function(data) {
+        pokedex = data.pokedex;
+        pokeMoves = data.pokeMoves;
+        console.log("success: pokemon");
+    });
+    $.getJSON("data/interactiveObjects.json").done(function(data) {
+        staticObjects = data.staticObjects;
+        claimableObjects = data.claimableObjects;
+        console.log("success: objects");
+        loadNPCsAndObjects(currentLocation);
+    });
+    setGameControls();
+});
 
 var squareSize = 2.5;
 var playerY = 7; 
@@ -37,10 +59,10 @@ var walkingInterval = null;
 var moving = false;
 var token = 0;
 var currentLocation = "pallet";
-var mapWidth = mapLocations[currentLocation][0][1].length;
-var mapHeight = mapLocations[currentLocation][0].length;
+var mapWidth = 0;
+var mapHeight = 0;
 var inventory = [];
-var ownedPokemon = pokedex.filter(item => item.owned);
+var ownedPokemon = [];
 var myPokemon = null;
 var ranPokemon = null;
 var enemyTrainer = null;
@@ -102,6 +124,8 @@ function movePlayer(direction) {
 
 function checkPermittedMove(direction) {
     var targetSquare = null;
+    mapWidth = mapLocations[currentLocation][0][1].length;
+    mapHeight = mapLocations[currentLocation][0].length;
     //THIS CHECKS WHETHER targetSquare IS A STRING 4X. REFACTOR.
     switch (direction) {
         case "up":
@@ -165,6 +189,7 @@ function checkPermittedMove(direction) {
         // Square is taken by a claimable object
         return false;
     } else if (targetSquare.toString()[0] === "8") {
+        ownedPokemon = pokedex.filter(item => item.owned);
         if (ownedPokemon.length === 0) {
             showText("You'll need a pokemon to leave town. Find Professor Oak.");
             return false;
@@ -674,8 +699,15 @@ function checkWin() {
 //     var 
 // }
 
-$(document).ready(function() {
-    loadNPCsAndObjects(currentLocation);
-    setGameControls();
-    $("#winScreen").hide();
-});
+
+
+
+
+
+
+
+
+
+
+
+

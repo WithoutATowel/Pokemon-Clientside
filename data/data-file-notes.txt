@@ -1,0 +1,17 @@
+HOW TO READ MAPS.JSON
+0 = Empty
+1 = Obstacle 
+2X = readable object, second number is an ID
+3 = Water
+4 = Tall grass
+5 = jumpable ledge
+6X = Non-Player Character, second number is an ID
+7X = claimable object, second number is an ID
+8 = invisible barrier
+String = new location
+
+STEPS for adding an NPC:
+1. Add the npc object to the appropriate map here
+2. Add the npc's to the map data file
+3. Add an image for the NPC's "background"
+Note: "location" is stored as [y index, x index]
