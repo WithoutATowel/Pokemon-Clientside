@@ -40,7 +40,7 @@ var pokedex = [
         attack : 12,
         defense : 8,
         type : "fire",
-        owned : true,
+        owned : false,
         frontImage : "img/pokemon/front/charmander.png",
         backImage : "img/pokemon/back/charmander.png"
     },

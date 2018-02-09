@@ -12,11 +12,10 @@
 // Clean code!!
 
 // TODAY
-// Add "gym" at end of route1
-// Prevent player from taking more than 1 Pokemon
-// Prevent player from leaving Pallet without a pokemon w/ positive health. Show a warning message.
-// Add NPC movement
 // Add leveling up
+// Prevent using "B" to get out of fights
+// Add NPC movement
+
 // Incorporate Pokemon stats into battle mode
 // Make Growl do something
 // Randomize pokestats
@@ -71,7 +70,11 @@ function movePlayer(direction) {
                     // swimAnimation();
                 } else if (squareType === 4) {
                     walkingAnimation(direction);
-                    if (Math.random() < 0.15) { enterFightMode() }
+                    if (Math.random() < 0.15) {
+                        playerState = "locked";
+                        walkingAnimation(direction);
+                        setTimeout(enterFightMode, 1000); 
+                    }
                 } else if (squareType === 5) {
                     jumpAnimation(direction);
                 }
@@ -155,6 +158,13 @@ function checkPermittedMove(direction) {
 }
 
 function loadNewMapArea(name) {
+    if (name === "route1" && ownedPokemon.length === 0) {
+        showText("You'll need a pokemon to leave town. Find Professor Oak.");
+        return;
+    } else if (name === "route1" && ownedPokemon[0].currentHP === 0) {
+        showText("Your pokemon has 0 HP! Talk to Mom to heal.");
+        return;
+    }
     var lastLocation = currentLocation;
     currentLocation = name;
     mapWidth = mapLocations[currentLocation][0][1].length - 2;
@@ -294,7 +304,9 @@ function interactOrSelect() {
         // Claimable items
         var itemId = parseInt(targetSquare.toString()[1]);
         item = claimableObjects[currentLocation][itemId];
-        if (item.confirmText) {
+        if (item.status === "locked") {
+            showText("You already took a Pokemon.");
+        } else if (item.confirmText) {
             showText(item.confirmText);
             $("#confirm").show();
             $("#yes").attr("data-value", itemId);
@@ -316,7 +328,10 @@ function takeItem(itemId) {
         } else {
             inventory.push(item);
         }
-        // Update item status in claimableObjects
+        // Update item statuses in claimableObjects
+        claimableObjects[currentLocation].forEach(function(obj) {
+            obj.status = "locked";
+        });
         item.status = "claimed";
         // Remove item from the map & screen
         var itemY = item.location[0];
@@ -324,7 +339,8 @@ function takeItem(itemId) {
         mapLocations[currentLocation][0][itemY][itemX] = 1;
         $("#" + item.name).remove();
         // If item required confirmation, restore game controls
-        if (item.confirmText) { 
+        if (item.confirmText) {
+            $("#confirm").hide();
             cancelOrBack();
             setGameControls(); 
         }
@@ -438,7 +454,7 @@ function enterFightMode() {
     }
     $("#battleOptions").hide();
     $("#battleText").show();
-    $("#battleScreen").show();
+    $("#battleScreen").show("pulsate");
     $(document).off("keydown");
     $(document).on("keydown", function(event) {
         if (event.keyCode === 75) {
