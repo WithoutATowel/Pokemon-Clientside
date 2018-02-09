@@ -6,6 +6,7 @@
 // 5 = jumpable ledge
 // 6X = Non-Player Character, second number is an ID
 // 7X = claimable object, second number is an ID
+// 8 = invisible barrier
 // String = new location
 
 
@@ -13,7 +14,7 @@ var mapLocations = {
     pallet : [
         [  // Map. 20 (22) wide, 18 (20) tall.
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, "route1", "route1", 1, 1, 1, 1, 1, 1, 1, 1, 1],
-            [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1],
+            [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 8, 8, 1, 0, 0, 0, 0, 0, 1, 0, 1],
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1],
             [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
             [1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1],
@@ -37,7 +38,7 @@ var mapLocations = {
             ashHouse1: [7, 6],
             rivalHouse: [7, 14],
             oakLab: [13, 13],
-            route1: [1, 12]
+            route1: [2, 11]
         }
     ],
     ashHouse1 : [

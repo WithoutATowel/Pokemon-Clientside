@@ -1,25 +1,32 @@
 // LATER
-// make map transitions smoother
-// No player movement while new map is loading
-// Save game + load game
-// "Turn Gameboy off/on"
-// create "keyboard" menu for entering your player's name. Store it in localStorage.
-
-// update maps.js --> JSON, start that server thing, load data using AJAX
-// Fix walking bug: https://stackoverflow.com/questions/29279805/keydown-doesnt-continuously-fire-when-pressed-and-hold?rq=1
-// Put a book on the table in rivalHouse?
-// Intro animation
-// Clean code!!
-
-// TODAY
 // Add leveling up
 // Prevent using "B" to get out of fights
 // Add NPC movement
-
-// Incorporate Pokemon stats into battle mode
-// Randomize pokestats
-// Add some RNG to damage per attack
 // Make Growl do something
+// Have different spawn rates per pokemon type
+// Responsive + mediaqueries 
+// Save game + load game
+// "Turn Gameboy off/on"
+// Intro animation
+// Fix bug with facing direction & map transitions
+// Start game in Ashe's room?
+// Add dialog beyond a single line of text?
+// create "keyboard" menu for entering your player's name. Store it in localStorage.
+// Fix walking bug: https://stackoverflow.com/questions/29279805/keydown-doesnt-continuously-fire-when-pressed-and-hold?rq=1
+// Clean code!!
+
+// TODAY
+// Fix barrier to Route1, add text for defeat
+// Fix menu select bug
+// make map transitions smoother
+// No player movement while new map is loading
+// update maps.js --> JSON, start that server thing, load data using AJAX
+// Add entry animations for pokemon in fight modes
+// Incorporate Pokemon stats into battle mode
+// Add some RNG to damage per attack
+// Randomize pokestats
+// Add music + sound effects + mute button
+
 
 var squareSize = 2.5;
 var playerY = 7; 
@@ -151,6 +158,16 @@ function checkPermittedMove(direction) {
     } else if (targetSquare.toString()[0] === "7") {
         // Square is taken by a claimable object
         return false;
+    } else if (targetSquare.toString()[0] === "8") {
+        if (ownedPokemon.length === 0) {
+            showText("You'll need a pokemon to leave town. Find Professor Oak.");
+            return false;
+        } else if (ownedPokemon[0].currentHP === 0) {
+            showText("Your pokemon has 0 HP! Talk to Mom to heal.");
+            return false;
+        } else {
+            return true;
+        }
     } else {
         // Nothing disqualifies the square
         return true;
@@ -158,13 +175,6 @@ function checkPermittedMove(direction) {
 }
 
 function loadNewMapArea(name) {
-    if (name === "route1" && ownedPokemon.length === 0) {
-        showText("You'll need a pokemon to leave town. Find Professor Oak.");
-        return;
-    } else if (name === "route1" && ownedPokemon[0].currentHP === 0) {
-        showText("Your pokemon has 0 HP! Talk to Mom to heal.");
-        return;
-    }
     var lastLocation = currentLocation;
     currentLocation = name;
     mapWidth = mapLocations[currentLocation][0][1].length - 2;
@@ -542,6 +552,7 @@ function pokemonDefeated(defeatedPokemon, playerWonBool) {
             } else {
                 loadNewMapArea("pallet");
                 cancelOrBack();
+                showText("Your pokemon was defeated. Talk to Mom to heal up.");
             }
             enemyTrainer = null;
             $(document).off();
