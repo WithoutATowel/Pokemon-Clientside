@@ -321,7 +321,7 @@ html, body {
   padding: 0; }
 
 #winScreen {
-  display: flex;
+  display: none;
   flex-direction: column;
   justify-content: center;
   width: 27.5vw;
@@ -332,6 +332,22 @@ html, body {
   text-align: center;
   position: absolute;
   font-size: 2em;
+  left: 0;
+  top: 0;
+  z-index: 100; }
+
+#levelUpScreen {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  width: 27.5vw;
+  height: 27.5vw;
+  background-color: #f8f8f8;
+  background-repeat: no-repeat !important;
+  background-size: 100% 100%;
+  text-align: center;
+  position: absolute;
+  font-size: 1em;
   left: 0;
   top: 0;
   z-index: 100; }

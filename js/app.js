@@ -1,6 +1,4 @@
 // LATER
-// Add leveling up
-// Prevent using "B" to get out of fights
 // Add NPC movement
 // Make Growl do something
 // Have different spawn rates per pokemon type
@@ -17,12 +15,11 @@
 // DONE
 
 // TODAY
-// Randomize pokestats
+// Add leveling up
+// How can you have a div start as display:none, then go to display:flex when shown?
 // Add music + sound effects + mute button
 
 $(document).ready(function() {
-    $("#winScreen").hide();
-
     // Load data as global variables
     $.getJSON("data/maps.json").done(function(data) {
         mapLocations = data.mapLocations;
@@ -386,17 +383,26 @@ function takeItem(itemId) {
 
 function instantiatePokemon(pokeId) {
     var myNewPokemon = Object.assign({}, pokedex[pokeId]);
-    var attackBonus = Math.round(Math.random() * 3) - 1; 
-    var defenseBonus = Math.round(Math.random() * 3) - 1;
-    var levelBonus = (pokeId === 0 || pokeId === 1 || pokeId === 2) ? 0 : Math.round(Math.random());
 
+    var attackBonus = Math.round(Math.random() * 3) - 1;
     myNewPokemon.attack += attackBonus;
+
+    var defenseBonus = Math.round(Math.random() * 3) - 1;
     myNewPokemon.defense += defenseBonus;
-    myNewPokemon.level += levelBonus;
+
+
+    if (pokeId === 0 || pokeId === 1 || pokeId === 2) {
+        var expNeeded = 10 * myNewPokemon.level;
+        myNewPokemon.expNeeded = expNeeded;
+        myNewPokemon.currentExp = 0;
+    } else {
+        var levelBonus = Math.round(Math.random());
+        myNewPokemon.level += levelBonus;
+    }
+
 
     var maxHPBonus = (myNewPokemon.level - 4) * (Math.round(Math.random() * 3) - 1);
     var newMaxHP = pokedex[pokeId].maxHP + 2 * myNewPokemon.level + maxHPBonus;
-
     myNewPokemon.maxHP = newMaxHP;
     myNewPokemon.currentHP = newMaxHP;
 
@@ -411,7 +417,8 @@ function showText(text) {
 
 function cancelOrBack() {
     $("#textBox").hide();
-    $("#battleScreen").hide();
+    $("#battleScreen").hide(); //DON'T FORGET TO REMOVE THIS
+
     playerState = "standing";
 }
 
@@ -585,6 +592,8 @@ function pokemonDefeated(defeatedPokemon, playerWonBool) {
     $("#battleText").text(defeatedPokemon.name + " has fainted!");
     if (playerWonBool) {
         $("#enemyPokemonImage").hide("shake");
+        myPokemon.currentExp += ranPokemon.level * 2;
+
     } else {
         $("#friendlyPokemonImage").hide("pulsate");
     }
@@ -593,10 +602,13 @@ function pokemonDefeated(defeatedPokemon, playerWonBool) {
         if (event.keyCode === 75) {
             if (playerWonBool) {
                 cancelOrBack();
-                if (enemyTrainer) {
-                    showText("How could I have lost?!");
+                checkWin();
+                if (myPokemon.currentExp >= myPokemon.expNeeded) { //THIS LOGIC IS FUCKED UP
+                    levelUp();
+                    if (enemyTrainer) { enemyTrainer.defeated = true; }
+                } else if (enemyTrainer) {
                     enemyTrainer.defeated = true;
-                    checkWin(); 
+                    showText("How could I have lost?!"); 
                 }
             } else {
                 loadNewMapArea("pallet");
@@ -608,6 +620,17 @@ function pokemonDefeated(defeatedPokemon, playerWonBool) {
             setGameControls();
         }
     });
+}
+
+function levelUp(){
+    myPokemon.level++;
+    myPokemon.currentExp = 0;
+    myPokemon.expNeeded = 10 * myPokemon.level;
+    myPokemon.maxHP += 2;
+
+    $("#pokemonLargeImage").attr("src", myPokemon.frontImage);
+    $("#levelUpText").text(myPokemon.name + " has reached level " + myPokemon.level + "!");
+    $("#levelUpScreen").show().css("display", "flex");
 }
 
 function startMenu() {
@@ -692,7 +715,7 @@ function checkWin() {
         }
     });
     if (defeatedBosses.length === 4) {
-        $("#winScreen").show("scale");
+        $("#winScreen").show().css("display", "flex");
     }
 }
 
