@@ -17,8 +17,6 @@
 // DONE
 
 // TODAY
-// update maps.js --> JSON, start that server thing, load data using AJAX
-// Add entry animations for pokemon in fight modes
 // Incorporate Pokemon stats into battle mode
 // Add some RNG to damage per attack
 // Randomize pokestats
@@ -476,12 +474,12 @@ function enterFightMode() {
     walkingAnimation(playerDirection);
     ranPokemon = Math.round(Math.random() * 3) + 3;
     ranPokemon = Object.assign({}, pokedex[ranPokemon]);
+    myPokemon = ownedPokemon[0];
     $("#enemyPokemonName").text(ranPokemon.name.toUpperCase());
     $("#enemyPokemonHealthBar").css("width", "8.1vw"); //this is a magic number
     $("#enemyPokemonLevel").text(ranPokemon.level);
+    $("#enemyPokemonImage").hide();
     $("#enemyPokemonImage").attr("src", ranPokemon.frontImage);
-    $("#enemyPokemonImage").show();
-    myPokemon = ownedPokemon[0];
     $("#friendlyPokemonName").text(myPokemon.name.toUpperCase());
     var healthBarWidth = 8.1 * (myPokemon.currentHP / myPokemon.maxHP);
     $("#friendlyPokemonHealthBar").css("width", healthBarWidth + "vw");
@@ -507,6 +505,7 @@ function enterFightMode() {
     $("#battleOptions").hide();
     $("#battleText").show();
     $("#battleScreen").show("pulsate");
+    $("#enemyPokemonImage").show("slide", { direction : "right", distance : 300 }, 800);
     $(document).off("keydown");
     $(document).on("keydown", function(event) {
         if (event.keyCode === 75) {
