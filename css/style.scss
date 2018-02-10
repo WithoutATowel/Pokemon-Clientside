@@ -424,10 +424,17 @@ html, body {
     background-size: 100% 100%;
     text-align: center;
     position: absolute;
-    font-size: 1em;
+    font-size: 2em;
     left: 0;
     top: 0;
     z-index: 100;
+}
+
+#pokemonLargeImage {
+    height: 6 * $edgeLength;
+    width: 6 * $edgeLength;
+    image-rendering: pixelated;
+    margin: 0 auto;
 }
 
 

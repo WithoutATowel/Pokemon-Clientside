@@ -416,10 +416,14 @@ function showText(text) {
 }
 
 function cancelOrBack() {
-    $("#textBox").hide();
-    $("#battleScreen").hide(); //DON'T FORGET TO REMOVE THIS
-
-    playerState = "standing";
+    if ($("#levelUpScreen").css("display") !== "none") {
+        $("#levelUpScreen").hide();
+        return;
+    } else {
+        $("#textBox").hide();
+        $("#battleScreen").hide(); //DON'T FORGET TO REMOVE THIS
+        playerState = "standing";
+    }
 }
 
 function chooseMenuItem(options, callback) {
@@ -605,8 +609,8 @@ function pokemonDefeated(defeatedPokemon, playerWonBool) {
                 checkWin();
                 if (myPokemon.currentExp >= myPokemon.expNeeded) { //THIS LOGIC IS FUCKED UP
                     levelUp();
-                    if (enemyTrainer) { enemyTrainer.defeated = true; }
-                } else if (enemyTrainer) {
+                } 
+                if (enemyTrainer) {
                     enemyTrainer.defeated = true;
                     showText("How could I have lost?!"); 
                 }
