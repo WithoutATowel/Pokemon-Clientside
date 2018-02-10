@@ -36,7 +36,7 @@
                 "background" : "img/npcs/rivalHouse/60.png",
                 "facing" : "right", 
                 "trainer" : false, 
-                "dialog" : "Why are you in my house? Mad creepy, bro."
+                "dialog" : "Why are you in my house? Very creepy."
             }
         ],
         "oakLab" : [
@@ -62,7 +62,7 @@
                 "background" : "img/npcs/oakLab/61.png",
                 "facing" : "down", 
                 "trainer" : false, 
-                "dialog" : "Do you have pizza bagels? I'm so stoned right now."
+                "dialog" : "I am SO stoned right now."
             },
             {
                 "name" : "profOak",

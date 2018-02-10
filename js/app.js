@@ -4,6 +4,7 @@
 // Save game + load game
 // "Turn Gameboy off/on"
 // Intro animation
+// Fix that annoying menu wiggle bug?
 // Start game in Ashe's room?
 // Add dialog beyond a single line of text?
 // create "keyboard" menu for entering your player's name. Store it in localStorage.
@@ -19,6 +20,7 @@
 // make walking over a fence force you to go an extra square
 // Responsive + mediaqueries
 // Add animations to show button presses (regardless of input method used)
+// Prevent selecting invalid menu options
 
 $(document).ready(function() {
     // Load data as global variables
@@ -61,7 +63,20 @@ var myPokemon = null;
 var ranPokemon = null;
 var enemyTrainer = null;
 var turn = 0;
+
+// Define music objects and set volumes
+var walkingSound = new Audio("music/footsteps.mp3")
+var doorSound = new Audio("music/door.wav");
+var menuSound = new Audio("music/menu-move.wav");
+var damageSound = new Audio("music/damage.wav");
+var defeatSound = new Audio("music/defeated.wav");
+var explosionSound = new Audio("music/explosion.wav");
 var mapMusic = null;
+walkingSound.volume = 0.1;
+walkingSound.loop = true;
+menuSound.volume = 0.5;
+explosionSound.volume = 0.5;
+
 
 function movePlayer(direction) {
     if (playerState !== "locked") {
@@ -95,11 +110,12 @@ function movePlayer(direction) {
                     // swimAnimation();
                 } else if (squareType === 4) {
                     walkingAnimation(direction);
-                    if (Math.random() < 0.15) {
-                        playerState = "locked";
-                        walkingAnimation(direction);
-                        setTimeout(enterFightMode, 1000); 
-                    }
+                    // if (Math.random() < 0.15) {
+                    //     changeMusic("route1", "wildPokemonFight");
+                    //     playerState = "locked";
+                    //     walkingAnimation(direction);
+                    //     setTimeout(enterFightMode, 1000); 
+                    // }
                 } else if (squareType === 5) {
                     jumpAnimation(direction);
                 }
@@ -202,7 +218,7 @@ function checkPermittedMove(direction) {
 function loadNewMapArea(name) {
     var lastLocation = currentLocation;
     currentLocation = name;
-    playMusic(lastLocation, currentLocation);
+    changeMusic(lastLocation, currentLocation);
     mapWidth = mapLocations[currentLocation][0][1].length - 2;
     mapHeight = mapLocations[currentLocation][0].length - 2;
     playerDirection = mapLocations[currentLocation][1][lastLocation][2];
@@ -232,34 +248,54 @@ function loadNewMapArea(name) {
     }, 450);
 }
 
-function playMusic(lastLocation, newLocation) {
-    var soundEffect = null;
+function changeMusic(lastLocation, newLocation) {
+
+    function fadeSwitch(file){
+        var turnDown = setInterval(function() {
+            if (mapMusic.volume > 0.05) {
+                mapMusic.volume -= 0.05;
+            }
+            }, 100);
+            setTimeout(function(){
+                clearInterval(turnDown);
+                mapMusic.pause();
+                mapMusic = new Audio("music/" + file);
+                mapMusic.volume = 0.25;
+                mapMusic.loop = true;
+                mapMusic.play();
+            }, 500);
+        }
+
     switch (newLocation) {
         case "ashHouse1":
         case "rivalHouse":
         case "oakLab":
-            soundEffect = new Audio("music/door.wav");
-            soundEffect.play();
+            doorSound.play();
             break;
         case "pallet":
             if (lastLocation === "route1") {
-                mapMusic.pause();
-                mapMusic = new Audio("music/pallet.mp3");
-                mapMusic.play();
+                fadeSwitch("pallet.mp3");
             } else {
-                soundEffect = new Audio("music/door.wav");
-                soundEffect.play();
+                doorSound.play();
             }
             break;
         case "route1":
-            mapMusic.pause();
-            mapMusic = new Audio("music/route1.mp3");
-            mapMusic.play();
+            fadeSwitch("route1.mp3");
             break;
         case "finalFourLair":
-            mapMusic.pause();
-            mapMusic = new Audio("music/final-four-lair.mp3");
-            mapMusic.play();
+            fadeSwitch("final-four-lair.mp3");
+            break;
+        case "wildPokemonFight":
+            fadeSwitch("wild-pokemon.mp3");
+            break;
+        case "normalTrainerFight":
+            fadeSwitch("vs-trainer.mp3");
+            break;
+        case "finalFourFight":
+            fadeSwitch("final-four.mp3");
+            break;
+        case "winScreen":
+            fadeSwitch("hall-of-fame.mp3");
             break;
         default:
     }
@@ -318,6 +354,7 @@ function walkingAnimation(direction) {
         clearInterval(walkingInterval);
         walkingInterval = null;
         $("#player").css("background-position", spriteX + " 0%");
+        walkingSound.pause();
     } else if (playerState === "walking" && walkingInterval === null) {
         $("#player").css("background-position", spriteX + " 0%")
         walkingInterval = setInterval(function() {
@@ -329,6 +366,7 @@ function walkingAnimation(direction) {
                 token = 0;
             }   
         }, 150);
+        walkingSound.play();
     } 
 }
 
@@ -368,6 +406,8 @@ function interactOrSelect() {
         } else if (item.trainer) {
             enemyTrainer = allNPCs[currentLocation][parseInt(targetSquare.toString()[1])];
             showText(item.dialog);
+            var trainerType = (enemyTrainer.finalFour) ? "finalFourFight" : "normalTrainerFight";
+            changeMusic("", trainerType);
             $(document).off();
             setTimeout(enterFightMode, 1000);
         } else {
@@ -416,6 +456,7 @@ function takeItem(itemId) {
             setGameControls(); 
         }
     } else {
+        $("#confirm").hide();
         cancelOrBack();
         setGameControls();
     } 
@@ -458,10 +499,14 @@ function showText(text) {
 function cancelOrBack() {
     if ($("#levelUpScreen").css("display") !== "none") {
         $("#levelUpScreen").hide();
+        menuSound.play();
         return;
-    } else {
+    } else if ($("#battleScreen").css("display") !== "none") {
+        $("#battleScreen").hide();
+        menuSound.play();
+    } else if ($("#textBox").css("display") !== "none") {
         $("#textBox").hide();
-        $("#battleScreen").hide(); //DON'T FORGET TO REMOVE THIS
+        $("#confirm").hide();
         playerState = "standing";
     }
 }
@@ -494,6 +539,7 @@ function chooseMenuItem(options, callback) {
                     selectedOption--;
                 }
                 drawArrow();
+                menuSound.play();
                 break;
             case 40:
             case 83:
@@ -504,17 +550,20 @@ function chooseMenuItem(options, callback) {
                     selectedOption = 0;
                 }
                 drawArrow();
+                menuSound.play();
                 break;
             case 75:
                 //"k" button -> A. Return data-value of item with the "selectedOption" class.
                 $(document).off("keydown");
                 callback(options[selectedOption].getAttribute("data-value"));
+                menuSound.play();
                 break;
             case 76:
                 //"l" button -> B
                 $(document).off("keydown");
                 cancelOrBack();
                 setGameControls();
+                menuSound.play();
                 break;
             default:
         };
@@ -528,7 +577,6 @@ function buttonPress(button) {
 
 function enterFightMode() {
     turn = 0;
-    walkingAnimation(playerDirection);
     ranPokemon = instantiatePokemon(Math.round(Math.random() * 3) + 3);
     $("#enemyPokemonName").text(ranPokemon.name.toUpperCase());
     $("#enemyPokemonHealthBar").css("width", "8.1vw"); //this is a magic number
@@ -554,7 +602,7 @@ function enterFightMode() {
     });
     if (enemyTrainer) {
         $("#battleText").text("Poketrainer " + enemyTrainer.name + " sent out " + ranPokemon.name + "!");
-    } else { 
+    } else {
         $("#battleText").text("A wild " + ranPokemon.name + " appears!");
     }
     $("#battleOptions").hide();
@@ -569,8 +617,7 @@ function enterFightMode() {
     });
 }
 
-// This function allows players to make moves, and gets called over and over
-// until one Pokemon is defeated.
+// This function allows players to make moves, and gets called over and over until one Pokemon is defeated.
 function takeTurn(moveIndex) {
     var computerMove = null;
     var damage = 0;
@@ -583,16 +630,19 @@ function takeTurn(moveIndex) {
         var healthBarWidth = 8.1 * (ranPokemon.currentHP / ranPokemon.maxHP);
         setTimeout(function() {
             $("#enemyPokemonHealthBar").css("width", healthBarWidth + "vw");
+            $("#enemyPokemonImage").effect("shake");
+            // Check whether one of the pokemon has won the fight
+            if (ranPokemon.currentHP <= 0) {
+                explosionSound.play();
+                pokemonDefeated(ranPokemon, true);
+            } else {
+                damageSound.play();
+            }
         }, 500);
-    }
-
-    // Check whether one of the pokemon has won the fight
-    if (ranPokemon.currentHP <= 0) {
-        pokemonDefeated(ranPokemon, true);
-        return;
-    } else if (myPokemon.currentHP <= 0) {
-        pokemonDefeated(myPokemon, false);
-        return;
+        // This has to be outside of the timeout to prevent the computer from taking another turn after being defeated.
+        if (ranPokemon.currentHP <= 0) {
+            return;
+        }
     }
 
     if (turn === 0) {
@@ -619,6 +669,14 @@ function takeTurn(moveIndex) {
             setTimeout(function() {
                 $("#friendlyPokemonHealthBar").css("width", healthBarWidth + "vw");
                 $("#friendlyPokemonHealthNum").html(myPokemon.currentHP + " &nbsp; &nbsp; &nbsp; &nbsp;" + myPokemon.maxHP);
+                $("#friendlyPokemonImage").effect("shake");
+                if (myPokemon.currentHP <= 0) {
+                    defeatSound.play();
+                    pokemonDefeated(myPokemon, false);
+                    return;
+                } else {
+                    damageSound.play();
+                }
             }, 500);
             turn--;
             $(document).on("keydown", function(event) {
@@ -635,33 +693,44 @@ function pokemonDefeated(defeatedPokemon, playerWonBool) {
     $("#battleText").show();
     $("#battleText").text(defeatedPokemon.name + " has fainted!");
     if (playerWonBool) {
-        $("#enemyPokemonImage").hide("shake");
+        $("#enemyPokemonImage").hide("explode");
+        if (enemyTrainer) {
+            enemyTrainer.defeated = true;
+            if (checkWin()) {
+                changeMusic("finalFourLair", "winScreen");
+            } else {
+                changeMusic("fight", currentLocation);
+            }
+            showText("How could I have lost?!");
+        } else {
+            changeMusic("fight", currentLocation);
+        }
         myPokemon.currentExp += ranPokemon.level * 2;
-
     } else {
         $("#friendlyPokemonImage").hide("pulsate");
     }
 
+    $(document).off();
     $(document).on("keydown", function(event) {
-        if (event.keyCode === 75) {
+        if (event.keyCode === 65 || 75) {
+            cancelOrBack();
             if (playerWonBool) {
-                cancelOrBack();
-                checkWin();
-                if (myPokemon.currentExp >= myPokemon.expNeeded) { //THIS LOGIC IS FUCKED UP
+                if (checkWin()) {
+                     $(document).off();
+                     $("#winScreen").show().css("display", "flex");
+                } else if (myPokemon.currentExp >= myPokemon.expNeeded) {
                     levelUp();
+                } else {
+                    $(document).off();
+                    setGameControls();
                 } 
-                if (enemyTrainer) {
-                    enemyTrainer.defeated = true;
-                    showText("How could I have lost?!"); 
-                }
             } else {
                 loadNewMapArea("pallet");
-                cancelOrBack();
                 showText("Your pokemon was defeated. Talk to Mom to heal up.");
+                $(document).off();
+                setGameControls();
             }
             enemyTrainer = null;
-            $(document).off();
-            setGameControls();
         }
     });
 }
@@ -675,6 +744,15 @@ function levelUp(){
     $("#pokemonLargeImage").attr("src", myPokemon.frontImage);
     $("#levelUpText").text(myPokemon.name + " has reached level " + myPokemon.level + "!");
     $("#levelUpScreen").show().css("display", "flex");
+    $("#battleScreen").hide();
+    $(document).off();
+    $(document).on("keydown", function(event) {
+        if (event.keyCode === 65 || 75) {
+            cancelOrBack();
+            $(document).off();
+            setGameControls();
+        }
+    });
 }
 
 function startMenu() {
@@ -758,8 +836,10 @@ function checkWin() {
             return false;
         }
     });
-    if (defeatedBosses.length === 4) {
-        $("#winScreen").show().css("display", "flex");
+    if (defeatedBosses.length === 4) { 
+        return true;
+    } else {
+        return false;
     }
 }
 
