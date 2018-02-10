@@ -24,21 +24,19 @@
 
 $(document).ready(function() {
     // Load data as global variables
+    $.getJSON("data/NPCsAndObjects.json").done(function(data) {
+        staticObjects = data.staticObjects;
+        claimableObjects = data.claimableObjects;
+        allNPCs = data.allNPCs;
+        loadNPCsAndObjects(currentLocation);
+    });
     $.getJSON("data/maps.json").done(function(data) {
         mapLocations = data.mapLocations;
-    });
-    $.getJSON("data/npcs.json").done(function(data) {
-        allNPCs = data.allNPCs;
     });
     $.getJSON("data/pokedex.json").done(function(data) {
         pokedex = data.pokedex;
         pokeMoves = data.pokeMoves;
         myPokemon = instantiatePokemon(0); //DON'T FORGET TO REMOVE THIS
-    });
-    $.getJSON("data/interactiveObjects.json").done(function(data) {
-        staticObjects = data.staticObjects;
-        claimableObjects = data.claimableObjects;
-        loadNPCsAndObjects(currentLocation);
     });
     setGameControls();
     mapMusic = new Audio("music/pallet.mp3");
@@ -507,6 +505,7 @@ function cancelOrBack() {
     } else if ($("#textBox").css("display") !== "none") {
         $("#textBox").hide();
         $("#confirm").hide();
+        menuSound.play();
         playerState = "standing";
     }
 }
