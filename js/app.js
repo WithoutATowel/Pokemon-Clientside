@@ -1,8 +1,6 @@
 // LATER
 // Add NPC movement
-// Make Growl do something
 // Have different spawn rates per pokemon type
-// Responsive + mediaqueries 
 // Save game + load game
 // "Turn Gameboy off/on"
 // Intro animation
@@ -14,10 +12,13 @@
 
 // DONE
 
-// TODAY
-// Add leveling up
-// How can you have a div start as display:none, then go to display:flex when shown?
+// NEXT
 // Add music + sound effects + mute button
+// Make d-pad + buttons work
+// Make Growl do something
+// make walking over a fence force you to go an extra square
+// Responsive + mediaqueries
+// Add animations to show button presses (regardless of input method used)
 
 $(document).ready(function() {
     // Load data as global variables
@@ -38,6 +39,10 @@ $(document).ready(function() {
         loadNPCsAndObjects(currentLocation);
     });
     setGameControls();
+    mapMusic = new Audio("music/pallet.mp3");
+    mapMusic.volume = 0.25;
+    mapMusic.loop = true;
+    mapMusic.play();
 });
 
 var squareSize = 2.5;
@@ -56,6 +61,7 @@ var myPokemon = null;
 var ranPokemon = null;
 var enemyTrainer = null;
 var turn = 0;
+var mapMusic = null;
 
 function movePlayer(direction) {
     if (playerState !== "locked") {
@@ -196,6 +202,7 @@ function checkPermittedMove(direction) {
 function loadNewMapArea(name) {
     var lastLocation = currentLocation;
     currentLocation = name;
+    playMusic(lastLocation, currentLocation);
     mapWidth = mapLocations[currentLocation][0][1].length - 2;
     mapHeight = mapLocations[currentLocation][0].length - 2;
     playerDirection = mapLocations[currentLocation][1][lastLocation][2];
@@ -223,6 +230,39 @@ function loadNewMapArea(name) {
             }
         }, 400);
     }, 450);
+}
+
+function playMusic(lastLocation, newLocation) {
+    var soundEffect = null;
+    switch (newLocation) {
+        case "ashHouse1":
+        case "rivalHouse":
+        case "oakLab":
+            soundEffect = new Audio("music/door.wav");
+            soundEffect.play();
+            break;
+        case "pallet":
+            if (lastLocation === "route1") {
+                mapMusic.pause();
+                mapMusic = new Audio("music/pallet.mp3");
+                mapMusic.play();
+            } else {
+                soundEffect = new Audio("music/door.wav");
+                soundEffect.play();
+            }
+            break;
+        case "route1":
+            mapMusic.pause();
+            mapMusic = new Audio("music/route1.mp3");
+            mapMusic.play();
+            break;
+        case "finalFourLair":
+            mapMusic.pause();
+            mapMusic = new Audio("music/final-four-lair.mp3");
+            mapMusic.play();
+            break;
+        default:
+    }
 }
 
 function loadNPCsAndObjects(location) {
