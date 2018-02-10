@@ -14,7 +14,7 @@
 // DONE
 
 // NEXT
-// Add music + sound effects + mute button
+// mute button
 // Make d-pad + buttons work
 // Make Growl do something
 // make walking over a fence force you to go an extra square
@@ -39,6 +39,7 @@ $(document).ready(function() {
         myPokemon = instantiatePokemon(0); //DON'T FORGET TO REMOVE THIS
     });
     setGameControls();
+    $("#muteButton").on("click", muteUnmute);
     mapMusic = new Audio("music/pallet.mp3");
     mapMusic.volume = 0.25;
     mapMusic.loop = true;
@@ -63,13 +64,14 @@ var enemyTrainer = null;
 var turn = 0;
 
 // Define music objects and set volumes
+var mute = false;
+var mapMusic = null;
 var walkingSound = new Audio("music/footsteps.mp3")
 var doorSound = new Audio("music/door.wav");
 var menuSound = new Audio("music/menu-move.wav");
 var damageSound = new Audio("music/damage.wav");
 var defeatSound = new Audio("music/defeated.wav");
 var explosionSound = new Audio("music/explosion.wav");
-var mapMusic = null;
 walkingSound.volume = 0.1;
 walkingSound.loop = true;
 menuSound.volume = 0.5;
@@ -258,6 +260,7 @@ function changeMusic(lastLocation, newLocation) {
                 clearInterval(turnDown);
                 mapMusic.pause();
                 mapMusic = new Audio("music/" + file);
+                if (mute) { mapMusic.muted = true };
                 mapMusic.volume = 0.25;
                 mapMusic.loop = true;
                 mapMusic.play();
@@ -839,6 +842,30 @@ function checkWin() {
         return true;
     } else {
         return false;
+    }
+}
+
+function muteUnmute() {
+    if(mute) {
+        $("#muteButton").css("background-image", "url(img/sound-allowed.png)");
+        mute = false;
+        mapMusic.muted = false;
+        walkingSound.muted = false;
+        doorSound.muted = false;
+        menuSound.muted = false;
+        damageSound.muted = false;
+        defeatSound.muted = false;
+        explosionSound.muted = false;
+    } else {
+        $("#muteButton").css("background-image", "url(img/mute-icon.png)");
+        mute = true;
+        mapMusic.muted = true;
+        walkingSound.muted = true;
+        doorSound.muted = true;
+        menuSound.muted = true;
+        damageSound.muted = true;
+        defeatSound.muted = true;
+        explosionSound.muted = true;
     }
 }
 

@@ -24,6 +24,10 @@ html, body {
     text-align: center;
 }
 
+button:focus {
+    outline:0;
+}
+
 #select-and-start-box p {
     margin: 10px 0 0 0;
 }
@@ -435,6 +439,20 @@ html, body {
     width: 6 * $edgeLength;
     image-rendering: pixelated;
     margin: 0 auto;
+}
+
+#muteButton {
+    display: inline-block;
+    height: 2vw; 
+    width: 2vw;
+    background-image: url("../img/sound-allowed.png");
+    background-repeat: no-repeat !important;
+    background-size: 100% 100%;
+    background-color: Transparent;
+    border: none;
+    position: relative;
+    top: 5px;
+    right: 1vw;
 }
 
 
