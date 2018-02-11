@@ -30,14 +30,14 @@ button:focus {
   grid-template-rows: 15% 85%;
   height: 100vh; }
 
-.row-2 {
+.controls-and-screen {
   display: grid;
   grid-template-columns: 20% 60% 20%; }
 
-.col-2-1 {
+.left-controls {
   position: relative; }
 
-.col-2-2 {
+.middle-section {
   display: grid;
   grid-template-rows: 80% 20%; }
 
@@ -47,7 +47,7 @@ button:focus {
   grid-template-columns: 15% 70% 15%;
   border-radius: 15px 15px 75px  15px; }
 
-.col-2-2-1-2 {
+.screen-box-container {
   justify-content: center;
   align-items: center;
   position: relative; }
@@ -123,7 +123,7 @@ button:focus {
   left: 50%;
   transform: translate(-50%, -50%); }
 
-#screenBox {
+#screen-box {
   display: flex;
   width: 27.5vw;
   height: 27.5vw;
@@ -189,14 +189,14 @@ button:focus {
   margin: 5px 85vw 0 5vw;
   width: 95px; }
 
-#textBox {
+#text-box {
   display: none;
   position: absolute;
   bottom: 0;
   text-align: left;
   color: black; }
 
-#confirm {
+#confirm-box {
   display: none;
   width: 5vw;
   height: 2.7vw;
@@ -207,10 +207,10 @@ button:focus {
   background-repeat: no-repeat !important;
   image-rendering: pixelated; }
 
-#confirm > div {
+#confirm-box > div {
   display: inline-block; }
 
-#confirm p {
+#confirm-box p {
   margin: 0;
   padding: 0; }
 
@@ -224,7 +224,7 @@ button:focus {
   clear: both;
   padding: 2.5vw 2.5vw 2.1vw 2.5vw; }
 
-#battleScreen {
+#battle-screen {
   display: none;
   width: 27.5vw;
   height: 27.5vw;
@@ -238,24 +238,24 @@ button:focus {
   top: 0;
   z-index: 10; }
 
-#enemyPokemonName, #enemyPokemonLevel, #enemyPokemonHealthBar, #friendlyPokemonName, #friendlyPokemonLevel,
-#friendlyPokemonHealthBar, #friendlyPokemonHealthNum, #battleText, #friendlyPokemonImage, #enemyPokemonImage, #battleOptions {
+#enemy-pokemon-name, #enemy-pokemon-level, #enemy-pokemon-health-bar, #friendly-pokemon-name, #friendly-pokemon-level,
+#friendly-pokemon-health-bar, #friendly-pokemon-health-num, #battle-text, #friendly-pokemon-image, #enemy-pokemon-image, #battle-options {
   position: absolute; }
 
-#enemyPokemonName {
+#enemy-pokemon-name {
   top: 0.5vw;
   left: 2vw;
   height: 1.5vw;
   width: 12vw;
   text-align: left; }
 
-#enemyPokemonLevel {
+#enemy-pokemon-level {
   top: 1.9vw;
   left: 6.75vw;
   height: 1.5vw;
   width: 1.5vw; }
 
-#enemyPokemonHealthBar {
+#enemy-pokemon-health-bar {
   background-color: #e6e6e6;
   top: 3.8vw;
   left: 5.6vw;
@@ -263,20 +263,20 @@ button:focus {
   width: 8.1vw;
   transition: width 0.5s ease; }
 
-#friendlyPokemonName {
+#friendly-pokemon-name {
   top: 11.25vw;
   right: 2vw;
   height: 1.5vw;
   width: 12vw;
   text-align: right; }
 
-#friendlyPokemonLevel {
+#friendly-pokemon-level {
   top: 12.5vw;
   right: 5.5vw;
   height: 1.5vw;
   width: 1.5vw; }
 
-#friendlyPokemonHealthBar {
+#friendly-pokemon-health-bar {
   background-color: #e6e6e6;
   top: 14.5vw;
   left: 16.6vw;
@@ -284,13 +284,13 @@ button:focus {
   width: 8.1vw;
   transition: width 0.5s ease; }
 
-#friendlyPokemonHealthNum {
+#friendly-pokemon-health-num {
   top: 15.5vw;
   right: 4.25vw;
   height: 2vw;
   width: 6.5vw; }
 
-#battleText {
+#battle-text {
   bottom: 1vw;
   left: 1vw;
   height: 5vw;
@@ -298,7 +298,7 @@ button:focus {
   text-align: left;
   padding: 1vw; }
 
-#battleOptions {
+#battle-options {
   display: none;
   bottom: 1vw;
   left: 1vw;
@@ -307,13 +307,13 @@ button:focus {
   text-align: left;
   padding: 1vw; }
 
-#friendlyPokemonImage {
+#friendly-pokemon-image {
   bottom: 6.75vw;
   left: 1vw;
   height: 11vw;
   width: 11vw; }
 
-#enemyPokemonImage {
+#enemy-pokemon-image {
   top: 2vw;
   right: 2vw;
   height: 10vw;
@@ -326,7 +326,7 @@ button:focus {
   margin: 0;
   padding: 0; }
 
-#winScreen {
+#win-screen {
   display: none;
   flex-direction: column;
   justify-content: center;
@@ -342,7 +342,7 @@ button:focus {
   top: 0;
   z-index: 100; }
 
-#levelUpScreen {
+#level-up-screen {
   display: none;
   flex-direction: column;
   justify-content: center;
@@ -358,7 +358,7 @@ button:focus {
   top: 0;
   z-index: 100; }
 
-#pokemonLargeImage {
+#pokemon-large-image {
   height: 15vw;
   width: 15vw;
   image-rendering: pixelated;

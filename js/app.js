@@ -9,7 +9,6 @@
 
 
 // NEXT
-// make walking over a fence force you to go an extra square
 // Clean code!!
 // Responsive + mediaqueries
 // Add animations to show button presses (regardless of input method used)
@@ -233,7 +232,7 @@ function loadNewMapArea(name) {
         $("#screen").show("clip");
         setTimeout(function() {
             $("#player").show();
-            if ($("#textBox").css("display") === "none") {
+            if ($("#text-box").css("display") === "none") {
                 playerState = "standing";
             } else {
                 playerState = "locked";
@@ -422,9 +421,9 @@ function interactOrSelect() {
             showText("You already took a Pokemon.");
         } else if (item.confirmText) {
             showText(item.confirmText);
-            $("#confirm").show();
+            $("#confirm-box").show();
             $("#yes").attr("data-value", itemId);
-            chooseMenuItem(document.getElementById("confirmOptions").children, takeItem);
+            chooseMenuItem(document.getElementById("confirm-options").children, takeItem);
         } else {
             takeItem(itemId); // no confirm needed, so pass the item ID to takeItem()
         }
@@ -452,12 +451,12 @@ function takeItem(itemId) {
         $("#" + item.name).remove();
         // If item required confirmation, restore game controls
         if (item.confirmText) {
-            $("#confirm").hide();
+            $("#confirm-box").hide();
             cancelOrBack();
             setGameControls(); 
         }
     } else {
-        $("#confirm").hide();
+        $("#confirm-box").hide();
         cancelOrBack();
         setGameControls();
     } 
@@ -495,20 +494,20 @@ function instantiatePokemon(pokeId, owner) {
 function showText(text) {
     playerState = "locked";
     $("#text").text(text);
-    $("#textBox").show();
+    $("#text-box").show();
 }
 
 function cancelOrBack() {
-    if ($("#levelUpScreen").css("display") !== "none") {
-        $("#levelUpScreen").hide();
+    if ($("#level-up-screen").css("display") !== "none") {
+        $("#level-up-screen").hide();
         menuSound.play();
         return;
-    } else if ($("#battleScreen").css("display") !== "none") {
-        $("#battleScreen").hide();
+    } else if ($("#battle-screen").css("display") !== "none") {
+        $("#battle-screen").hide();
         menuSound.play();
-    } else if ($("#textBox").css("display") !== "none") {
-        $("#textBox").hide();
-        $("#confirm").hide();
+    } else if ($("#text-box").css("display") !== "none") {
+        $("#text-box").hide();
+        $("#confirm-box").hide();
         menuSound.play();
         playerState = "standing";
     }
@@ -597,19 +596,19 @@ function enterFightMode(enemyType) {
     ranPokemon = instantiatePokemon(pokemonIndex, enemyType);
 
 
-    $("#enemyPokemonName").text(ranPokemon.name.toUpperCase());
-    $("#enemyPokemonHealthBar").css("width", "8.1vw"); //this is a magic number
-    $("#enemyPokemonLevel").text(ranPokemon.level);
-    $("#enemyPokemonImage").hide();
-    $("#enemyPokemonImage").attr("src", ranPokemon.frontImage);
-    $("#friendlyPokemonName").text(myPokemon.name.toUpperCase());
+    $("#enemy-pokemon-name").text(ranPokemon.name.toUpperCase());
+    $("#enemy-pokemon-health-bar").css("width", "8.1vw"); //this is a magic number
+    $("#enemy-pokemon-level").text(ranPokemon.level);
+    $("#enemy-pokemon-image").hide();
+    $("#enemy-pokemon-image").attr("src", ranPokemon.frontImage);
+    $("#friendly-pokemon-name").text(myPokemon.name.toUpperCase());
     var healthBarWidth = 8.1 * (myPokemon.currentHP / myPokemon.maxHP);
-    $("#friendlyPokemonHealthBar").css("width", healthBarWidth + "vw");
-    $("#friendlyPokemonLevel").text(myPokemon.level);
-    $("#friendlyPokemonHealthNum").html(myPokemon.currentHP + " &nbsp; &nbsp; &nbsp; &nbsp;" + myPokemon.maxHP);
-    $("#friendlyPokemonImage").attr("src", myPokemon.backImage);
-    $("#friendlyPokemonImage").show();
-    var attackMoveDivs = $("#moveOptionsText").children();
+    $("#friendly-pokemon-health-bar").css("width", healthBarWidth + "vw");
+    $("#friendly-pokemon-level").text(myPokemon.level);
+    $("#friendly-pokemon-health-num").html(myPokemon.currentHP + " &nbsp; &nbsp; &nbsp; &nbsp;" + myPokemon.maxHP);
+    $("#friendly-pokemon-image").attr("src", myPokemon.backImage);
+    $("#friendly-pokemon-image").show();
+    var attackMoveDivs = $("#move-options-text").children();
     attackMoveDivs.each(function(index) {
         if (!isNaN(myPokemon.moves[index])) {
             this.innerText = pokeMoves[myPokemon.moves[index]].name;
@@ -620,14 +619,14 @@ function enterFightMode(enemyType) {
         }
     });
     if (enemyTrainer) {
-        $("#battleText").text("Poketrainer " + enemyTrainer.name + " sent out " + ranPokemon.name + "!");
+        $("#battle-text").text("Poketrainer " + enemyTrainer.name + " sent out " + ranPokemon.name + "!");
     } else {
-        $("#battleText").text("A wild " + ranPokemon.name + " appears!");
+        $("#battle-text").text("A wild " + ranPokemon.name + " appears!");
     }
-    $("#battleOptions").hide();
-    $("#battleText").show();
-    $("#battleScreen").show("pulsate");
-    $("#enemyPokemonImage").show("slide", { direction : "right", distance : 300 }, 800);
+    $("#battle-options").hide();
+    $("#battle-text").show();
+    $("#battle-screen").show("pulsate");
+    $("#enemy-pokemon-image").show("slide", { direction : "right", distance : 300 }, 800);
     $(document).off();
     $(document).on("keydown", function(event) {
         if (event.keyCode === 65 || event.keyCode === 75) {
@@ -649,14 +648,14 @@ function takeTurn(moveIndex) {
     var damage = 0;
 
     if (moveIndex) {
-        $("#friendlyPokemonImage").effect("bounce");
-        $("#battleOptions").hide();
+        $("#friendly-pokemon-image").effect("bounce");
+        $("#battle-options").hide();
         damage = Math.round(((2 * myPokemon.level) / 100) * (myPokemon.attack / ranPokemon.defense) * pokeMoves[moveIndex].damage);
         ranPokemon.currentHP -= damage;
         var healthBarWidth = 8.1 * (ranPokemon.currentHP / ranPokemon.maxHP);
         setTimeout(function() {
-            $("#enemyPokemonHealthBar").css("width", healthBarWidth + "vw");
-            $("#enemyPokemonImage").effect("shake");
+            $("#enemy-pokemon-health-bar").css("width", healthBarWidth + "vw");
+            $("#enemy-pokemon-image").effect("shake");
             // Check whether one of the pokemon has won the fight
             if (ranPokemon.currentHP <= 0) {
                 explosionSound.play();
@@ -673,18 +672,18 @@ function takeTurn(moveIndex) {
 
     if (turn === 0) {
         // Human player goes first
-        $("#battleText").hide();
-        $("#battleOptions").show();
-        chooseMenuItem(document.getElementById("moveOptions").children, takeTurn);
+        $("#battle-text").hide();
+        $("#battle-options").show();
+        chooseMenuItem(document.getElementById("move-options").children, takeTurn);
         turn++;
     } else if (turn === 1) {
         // Computer goes second
         setTimeout(function() {
             var ranIndex = Math.round(Math.random() * (ranPokemon.moves.length - 1));
             computerMove = ranPokemon.moves[ranIndex];
-            $("#battleText").show();
-            $("#battleText").text(ranPokemon.name + " used " + pokeMoves[computerMove].name + "!");
-            $("#enemyPokemonImage").effect("bounce");
+            $("#battle-text").show();
+            $("#battle-text").text(ranPokemon.name + " used " + pokeMoves[computerMove].name + "!");
+            $("#enemy-pokemon-image").effect("bounce");
             damage = Math.round(((2 * ranPokemon.level) / 100) * (ranPokemon.attack / myPokemon.defense) * pokeMoves[computerMove].damage);
             if (damage > myPokemon.currentHP) {
                 myPokemon.currentHP = 0;
@@ -693,9 +692,9 @@ function takeTurn(moveIndex) {
             }
             var healthBarWidth = 8.1 * (myPokemon.currentHP / myPokemon.maxHP);
             setTimeout(function() {
-                $("#friendlyPokemonHealthBar").css("width", healthBarWidth + "vw");
-                $("#friendlyPokemonHealthNum").html(myPokemon.currentHP + " &nbsp; &nbsp; &nbsp; &nbsp;" + myPokemon.maxHP);
-                $("#friendlyPokemonImage").effect("shake");
+                $("#friendly-pokemon-health-bar").css("width", healthBarWidth + "vw");
+                $("#friendly-pokemon-health-num").html(myPokemon.currentHP + " &nbsp; &nbsp; &nbsp; &nbsp;" + myPokemon.maxHP);
+                $("#friendly-pokemon-image").effect("shake");
                 if (myPokemon.currentHP <= 0) {
                     defeatSound.play();
                     pokemonDefeated(myPokemon, false);
@@ -720,11 +719,11 @@ function takeTurn(moveIndex) {
 }
 
 function pokemonDefeated(defeatedPokemon, playerWonBool) {
-    $("#battleOptions").hide();
-    $("#battleText").show();
-    $("#battleText").text(defeatedPokemon.name + " has fainted!");
+    $("#battle-options").hide();
+    $("#battle-text").show();
+    $("#battle-text").text(defeatedPokemon.name + " has fainted!");
     if (playerWonBool) {
-        $("#enemyPokemonImage").hide("explode");
+        $("#enemy-pokemon-image").hide("explode");
         if (enemyTrainer) {
             enemyTrainer.defeated = true;
             if (checkWin()) {
@@ -738,7 +737,7 @@ function pokemonDefeated(defeatedPokemon, playerWonBool) {
         }
         myPokemon.currentExp += 5 + ranPokemon.level * 2;
     } else {
-        $("#friendlyPokemonImage").hide("pulsate");
+        $("#friendly-pokemon-image").hide("pulsate");
     }
 
     function eventHandler(event) {
@@ -748,7 +747,7 @@ function pokemonDefeated(defeatedPokemon, playerWonBool) {
             if (playerWonBool) {
                 if (checkWin()) {
                      $(document).off();
-                     $("#winScreen").show().css("display", "flex");
+                     $("#win-screen").show().css("display", "flex");
                 } else if (myPokemon.currentExp >= myPokemon.expNeeded) {
                     levelUp();
                 } else if (enemyTrainer) {
@@ -781,10 +780,10 @@ function levelUp(){
     myPokemon.expNeeded = 10 * myPokemon.level;
     myPokemon.maxHP += 2;
 
-    $("#pokemonLargeImage").attr("src", myPokemon.frontImage);
-    $("#levelUpText").text(myPokemon.name + " has reached level " + myPokemon.level + "!");
-    $("#levelUpScreen").show().css("display", "flex");
-    $("#battleScreen").hide();
+    $("#pokemon-large-image").attr("src", myPokemon.frontImage);
+    $("#level-up-text").text(myPokemon.name + " has reached level " + myPokemon.level + "!");
+    $("#level-up-screen").show().css("display", "flex");
+    $("#battle-screen").hide();
 
     function eventHandler(event) {
         var token = event.keyCode ? event.keyCode : event.target.id;

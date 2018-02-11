@@ -44,26 +44,19 @@ button:focus {
     height: 100vh;
 }
 
-.row-1 {
-}
-
-.row-2 {
+.controls-and-screen {
     display: grid;
     grid-template-columns: 20% 60% 20%;
 }
 
-.col-2-1 {
+.left-controls {
     position: relative;
 }
 
-.col-2-2 {
+.middle-section {
     display: grid;
     grid-template-rows: 80% 20%;
 }
-
-.col-2-3 {
-}
-
 
 .row-2-2-1 {
     background: #505260;
@@ -72,19 +65,10 @@ button:focus {
     border-radius: 15px 15px 75px  15px;
 }
 
-.row-2-2-2 {
-}
-
-.col-2-2-1-1 {
-}
-
-.col-2-2-1-2 {
+.screen-box-container {
     justify-content: center;
     align-items: center;
     position: relative;
-}
-
-.col-2-2-1-3 {
 }
 
 .game-control:hover {
@@ -174,7 +158,7 @@ button:focus {
     transform: translate(-50%, -50%);
 }
 
-#screenBox {
+#screen-box {
     display: flex;
     width: 11 * $edgeLength;
     height: 11 * $edgeLength;
@@ -248,7 +232,7 @@ button:focus {
     width: 95px;
 }
 
-#textBox {
+#text-box {
     display: none;
     position: absolute;
     bottom: 0;
@@ -256,7 +240,7 @@ button:focus {
     color: black;
 }
 
-#confirm {
+#confirm-box {
     display: none;
     width: 2 * $edgeLength;
     height: 2.7vw;
@@ -268,11 +252,11 @@ button:focus {
     image-rendering: pixelated;
 }
 
-#confirm > div {
+#confirm-box > div {
     display: inline-block;
 }
 
-#confirm p {
+#confirm-box p {
     margin: 0;
     padding: 0;
 }
@@ -288,7 +272,7 @@ button:focus {
     padding: 2.5vw 2.5vw 2.1vw 2.5vw;;
 }
 
-#battleScreen {
+#battle-screen {
     display: none;
     width: 11 * $edgeLength;
     height: 11 * $edgeLength;
@@ -302,12 +286,12 @@ button:focus {
     top: 0;
     z-index: 10;
 }
-#enemyPokemonName, #enemyPokemonLevel, #enemyPokemonHealthBar, #friendlyPokemonName, #friendlyPokemonLevel, 
-#friendlyPokemonHealthBar, #friendlyPokemonHealthNum, #battleText, #friendlyPokemonImage, #enemyPokemonImage, #battleOptions{
+#enemy-pokemon-name, #enemy-pokemon-level, #enemy-pokemon-health-bar, #friendly-pokemon-name, #friendly-pokemon-level, 
+#friendly-pokemon-health-bar, #friendly-pokemon-health-num, #battle-text, #friendly-pokemon-image, #enemy-pokemon-image, #battle-options {
     position: absolute;
 }
 
-#enemyPokemonName {
+#enemy-pokemon-name {
     top: 0.5vw;
     left: 2vw;
     height: 1.5vw;
@@ -315,14 +299,14 @@ button:focus {
     text-align: left;
 }
 
-#enemyPokemonLevel {
+#enemy-pokemon-level {
     top: 1.9vw;
     left: 6.75vw;
     height: 1.5vw;
     width: 1.5vw;
 }
 
-#enemyPokemonHealthBar {
+#enemy-pokemon-health-bar {
     background-color: rgb(230, 230, 230);
     top: 3.8vw;
     left: 5.6vw;
@@ -331,7 +315,7 @@ button:focus {
     transition: width 0.5s ease;
 }
 
-#friendlyPokemonName {
+#friendly-pokemon-name {
     top: 11.25vw;
     right: 2vw;
     height: 1.5vw;
@@ -339,14 +323,14 @@ button:focus {
     text-align: right;
 }
 
-#friendlyPokemonLevel {
+#friendly-pokemon-level {
     top: 12.5vw;
     right: 5.5vw;
     height: 1.5vw;
     width: 1.5vw;
 }
 
-#friendlyPokemonHealthBar {
+#friendly-pokemon-health-bar {
     background-color: rgb(230, 230, 230);
     top: 14.5vw;
     left: 16.6vw;
@@ -355,14 +339,14 @@ button:focus {
     transition: width 0.5s ease;
 }
 
-#friendlyPokemonHealthNum {
+#friendly-pokemon-health-num {
     top: 15.5vw;
     right: 4.25vw;
     height: 2vw;
     width: 6.5vw;
 }
 
-#battleText {
+#battle-text {
     bottom: 1vw;
     left: 1vw;
     height: 5vw;
@@ -371,7 +355,7 @@ button:focus {
     padding: 1vw;
 }
 
-#battleOptions {
+#battle-options {
     display: none;
     bottom: 1vw;
     left: 1vw;
@@ -381,14 +365,14 @@ button:focus {
     padding: 1vw;
 }
 
-#friendlyPokemonImage {
+#friendly-pokemon-image {
     bottom: 6.75vw;
     left: 1vw;
     height: 11vw;
     width: 11vw;
 }
 
-#enemyPokemonImage {
+#enemy-pokemon-image {
     top: 2vw;
     right: 2vw;
     height: 10vw;
@@ -404,7 +388,7 @@ button:focus {
     padding: 0;
 }
 
-#winScreen {
+#win-screen {
     display: none;
     flex-direction: column;
     justify-content: center;
@@ -421,7 +405,7 @@ button:focus {
     z-index: 100;
 }
 
-#levelUpScreen {
+#level-up-screen {
     display: none;
     flex-direction: column;
     justify-content: center;
@@ -438,7 +422,7 @@ button:focus {
     z-index: 100;
 }
 
-#pokemonLargeImage {
+#pokemon-large-image {
     height: 6 * $edgeLength;
     width: 6 * $edgeLength;
     image-rendering: pixelated;
