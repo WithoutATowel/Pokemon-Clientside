@@ -52,6 +52,9 @@ button:focus {
   align-items: center;
   position: relative; }
 
+.game-control:hover {
+  cursor: pointer; }
+
 .pill-button {
   display: block;
   width: 4.5vw;
