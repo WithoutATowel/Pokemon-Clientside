@@ -14,7 +14,6 @@
 // DONE
 
 // NEXT
-// Bug 1: hitting "A" to get past "pokemon fainted" triggers trainer fights
 // Bug 2: sometimes the walking interval doesn't get cleared
 // Give HTML buttons cursor = pointer on hover
 // Make Growl do something
@@ -112,8 +111,9 @@ function movePlayer(direction) {
                 } else if (squareType === 4) {
                     walkingAnimation(direction);
                     if (Math.random() < 0.15) {
-                        changeMusic("route1", "wildPokemonFight");
+                        changeMusic("route1", "wildPokemonFight", "movePlayer");
                         playerState = "locked";
+                        $(document).trigger("mouseup");
                         walkingAnimation(direction);
                         setTimeout(enterFightMode, 1000); 
                     }
@@ -219,7 +219,7 @@ function checkPermittedMove(direction) {
 function loadNewMapArea(name) {
     var lastLocation = currentLocation;
     currentLocation = name;
-    changeMusic(lastLocation, currentLocation);
+    changeMusic(lastLocation, currentLocation, "loadNewMapArea");
     mapWidth = mapLocations[currentLocation][0][1].length - 2;
     mapHeight = mapLocations[currentLocation][0].length - 2;
     playerDirection = mapLocations[currentLocation][1][lastLocation][2];
@@ -249,7 +249,7 @@ function loadNewMapArea(name) {
     }, 450);
 }
 
-function changeMusic(lastLocation, newLocation) {
+function changeMusic(lastLocation, newLocation, source) {
 
     function fadeSwitch(file){
         var turnDown = setInterval(function() {
@@ -373,8 +373,8 @@ function walkingAnimation(direction) {
 }
 
 function jumpAnimation(direction) {
+    //Placeholder function. Eventually will expand this.
     console.log("Ashe jumped!");
-    //extra line to make this foldable
 }
 
 function interactOrSelect() {
@@ -395,7 +395,7 @@ function interactOrSelect() {
             break;
         default:
     }
-    if (targetSquare.toString()[0] === "2") {
+    if (targetSquare.toString()[0] === "2") { //MANUALLY STOP WALKING ANIMATION AND CLEAR INTERVAL HERE
         // Static, interactive objects
         item = staticObjects[currentLocation][parseInt(targetSquare.toString()[1])];
         showText(item.text);
@@ -406,10 +406,13 @@ function interactOrSelect() {
             myPokemon.currentHP = myPokemon.maxHP;
             showText(item.name + ": Here's some chocolate for your injured Pokemon. There you go, all better!");
         } else if (item.trainer) {
+            playerState = "locked"
+            $(document).trigger("mouseup");
+            walkingAnimation(playerDirection);
             enemyTrainer = allNPCs[currentLocation][parseInt(targetSquare.toString()[1])];
             showText(item.dialog);
             var trainerType = (enemyTrainer.finalFour) ? "finalFourFight" : "normalTrainerFight";
-            changeMusic("", trainerType);
+            changeMusic("", trainerType, "interactOrSelect");
             $(document).off();
             setTimeout(enterFightMode, 1000);
         } else {
@@ -582,8 +585,8 @@ function chooseMenuItem(options, callback) {
 }
 
 function buttonPress(button) {
+    //Test function
     console.log(button, "was pressed");
-    //extra line to make this foldable
 }
 
 function enterFightMode() {
@@ -720,11 +723,11 @@ function pokemonDefeated(defeatedPokemon, playerWonBool) {
             if (checkWin()) {
                 changeMusic("finalFourLair", "winScreen");
             } else {
-                changeMusic("fight", currentLocation);
+                changeMusic("fight", currentLocation, "pokemonDefeated, trainer fight");
             }
             showText("How could I have lost?!");
         } else {
-            changeMusic("fight", currentLocation);
+            changeMusic("fight", currentLocation, "pokemonDefeated, wild pokemon fight");
         }
         myPokemon.currentExp += ranPokemon.level * 2;
     } else {
@@ -741,8 +744,12 @@ function pokemonDefeated(defeatedPokemon, playerWonBool) {
                      $("#winScreen").show().css("display", "flex");
                 } else if (myPokemon.currentExp >= myPokemon.expNeeded) {
                     levelUp();
+                } else if (enemyTrainer) {
+                    // Do nothing so that hitting A or B calls this eventHandler again, 
+                    // triggering cancelOrBack to clear the trainer's loss message. This time,
+                    // enemyTrainer will be null, so controls get reset.
                 } else {
-                    $(document).off();
+                    $(document).off(); // Just do this at the beginning of setGameControls?
                     setGameControls();
                     playerState = "standing"
                 } 
@@ -787,8 +794,8 @@ function levelUp(){
 }
 
 function startMenu() {
+    // This is a placeholder function. Will eventually replace.
     console.log("This button opens the start menu");
-    //extra line to make this foldable
 }
 
 function setGameControls() {
