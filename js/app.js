@@ -14,7 +14,6 @@
 // DONE
 
 // NEXT
-// mute button
 // Make d-pad + buttons work
 // Make Growl do something
 // make walking over a fence force you to go an extra square
@@ -40,9 +39,8 @@ $(document).ready(function() {
     });
     setGameControls();
     $("#muteButton").on("click", muteUnmute);
-    mapMusic = new Audio("music/pallet.mp3");
-    mapMusic.volume = 0.25;
-    mapMusic.loop = true;
+    mute = (localStorage.mute === "true") ? false : true;
+    muteUnmute();
     mapMusic.play();
 });
 
@@ -64,14 +62,15 @@ var enemyTrainer = null;
 var turn = 0;
 
 // Define music objects and set volumes
-var mute = false;
-var mapMusic = null;
+var mapMusic = new Audio("music/pallet.mp3");;
 var walkingSound = new Audio("music/footsteps.mp3")
 var doorSound = new Audio("music/door.wav");
 var menuSound = new Audio("music/menu-move.wav");
 var damageSound = new Audio("music/damage.wav");
 var defeatSound = new Audio("music/defeated.wav");
 var explosionSound = new Audio("music/explosion.wav");
+mapMusic.volume = 0.25;
+mapMusic.loop = true;
 walkingSound.volume = 0.1;
 walkingSound.loop = true;
 menuSound.volume = 0.5;
@@ -818,7 +817,7 @@ function setGameControls() {
                 startMenu("start");
                 break;
             default:
-        };     
+        };          
     });
 
     $(document).on("keyup", function(event) {
@@ -827,6 +826,40 @@ function setGameControls() {
             playerState = "standing";
             walkingAnimation(playerDirection);
         }
+    });
+
+    $(document).on("mousedown", function(event) { 
+        switch (event.target.id) {
+            case "d-pad-left":
+                movePlayer("left");
+                break;
+            case "d-pad-up":
+                movePlayer("up");
+                break;
+            case "d-pad-right":
+                movePlayer("right");
+                break;
+            case "d-pad-down":
+                movePlayer("down");
+                break;
+            case "a-button":
+                if (playerState !== "locked") {
+                    interactOrSelect();
+                } else {
+                    cancelOrBack();
+                }
+                break;
+            case "b-button":
+                cancelOrBack();
+                break;
+            case "select":
+                buttonPress("select");
+                break;
+            case "start":
+                startMenu("start");
+                break;
+            default:
+        };
     });
 }
 
@@ -849,6 +882,7 @@ function muteUnmute() {
     if(mute) {
         $("#muteButton").css("background-image", "url(img/sound-allowed.png)");
         mute = false;
+        localStorage.mute = false;
         mapMusic.muted = false;
         walkingSound.muted = false;
         doorSound.muted = false;
@@ -859,6 +893,7 @@ function muteUnmute() {
     } else {
         $("#muteButton").css("background-image", "url(img/mute-icon.png)");
         mute = true;
+        localStorage.mute = true;
         mapMusic.muted = true;
         walkingSound.muted = true;
         doorSound.muted = true;
