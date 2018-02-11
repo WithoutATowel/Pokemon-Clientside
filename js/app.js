@@ -1,22 +1,16 @@
 // LATER
 // Add NPC movement
-// Have different spawn rates per pokemon type
 // Save game + load game
 // "Turn Gameboy off/on"
 // Intro animation
-// Fix that annoying menu wiggle bug?
+// Make Growl do something
 // Start game in Ashe's room?
-// Add dialog beyond a single line of text?
 // create "keyboard" menu for entering your player's name. Store it in localStorage.
-// Fix walking bug: https://stackoverflow.com/questions/29279805/keydown-doesnt-continuously-fire-when-pressed-and-hold?rq=1
-// Clean code!!
 
-// DONE
 
 // NEXT
-// Give HTML buttons cursor = pointer on hover
-// Make Growl do something
 // make walking over a fence force you to go an extra square
+// Clean code!!
 // Responsive + mediaqueries
 // Add animations to show button presses (regardless of input method used)
 // Prevent selecting invalid menu options
@@ -117,7 +111,7 @@ function movePlayer(direction) {
                         setTimeout(function() { enterFightMode("wild"); }, 1000); 
                     }
                 } else if (squareType === 5) {
-                    jumpAnimation(direction);
+                    movePlayer(direction);
                 }
             // (5 squares on screen above + offset by 1 buffer row) - playerY
             var mapY = ((6 - playerY) * squareSize) + "vw";
