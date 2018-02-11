@@ -28,14 +28,14 @@ button:focus {
     outline:0;
 }
 
-#select-and-start-box p {
-    margin: 10px 0 0 0;
-}
-
 .vertical-center {
     position: absolute;
     top: 40%;
     transform: translateY(-50%);
+}
+
+.game-control:hover {
+    cursor: pointer;
 }
 
 .container {
@@ -53,12 +53,32 @@ button:focus {
     position: relative;
 }
 
-.middle-section {
+.pill-button {
+    display: block;
+    width: 4.5vw;
+    height: 15px;
+    border-radius: 30px;
+    background: rgb(88, 88, 88);
+}
+
+.round-button {
+    width: 7vw;
+    height: 7vw;
+    border-radius: 5vw;
+    background: rgb(150, 36, 93);
+}
+
+.pad-square {
+    background-color: black;
+    border: none;
+}
+
+.screen-section {
     display: grid;
     grid-template-rows: 80% 20%;
 }
 
-.row-2-2-1 {
+.dark-gray-area {
     background: #505260;
     display: grid;
     grid-template-columns: 15% 70% 15%;
@@ -71,16 +91,40 @@ button:focus {
     position: relative;
 }
 
-.game-control:hover {
-    cursor: pointer;
+.npc, .claimableObject {
+    width: $edgeLength;
+    height: $edgeLength;
+    image-rendering: pixelated;
+    background-repeat: no-repeat !important;
+    background-position: center;
+    background-size: 100% !important;
+    position: absolute;
 }
 
-.pill-button {
-    display: block;
-    width: 4.5vw;
-    height: 15px;
-    border-radius: 30px;
-    background: rgb(88, 88, 88);
+#off-on {
+    display: inline-block;
+    font-family: sans-serif;
+    border-radius: 10px;
+    margin: 5px 85vw 0 5vw;
+    width: 95px;
+}
+
+#muteButton {
+    display: inline-block;
+    height: 2vw; 
+    width: 2vw;
+    background-image: url("../img/sound-allowed.png");
+    background-repeat: no-repeat !important;
+    background-size: 100% 100%;
+    background-color: Transparent;
+    border: none;
+    position: relative;
+    top: 5px;
+    right: 1vw;
+}
+
+#select-and-start-box p {
+    margin: 10px 0 0 0;
 }
 
 #select, #start {
@@ -105,21 +149,16 @@ button:focus {
     margin-left: 2vw;
 }
 
-.round-button {
-    width: 7vw;
-    height: 7vw;
-    border-radius: 5vw;
-    background: rgb(150, 36, 93);
-}
-
 #a-b-button-box {
     transform: rotate(-20deg);
     font-size: 2em;
 }
 
-.pad-square {
-    background-color: black;
-    border: none;
+#d-pad-and-start-select-box {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 #d-pad {
@@ -149,13 +188,6 @@ button:focus {
 #d-pad-center {
     border: 2px solid black;
     z-index: 2;
-}
-
-#d-pad-and-start-select-box {
-    position: absolute;
-    top: 40%;
-    left: 50%;
-    transform: translate(-50%, -50%);
 }
 
 #screen-box {
@@ -200,36 +232,6 @@ button:focus {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-}
-
-.npc, .claimableObject {
-    width: $edgeLength;
-    height: $edgeLength;
-    image-rendering: pixelated;
-    background-repeat: no-repeat !important;
-    background-position: center;
-    background-size: 100% !important;
-    position: absolute;
-}
-
-#nintendo {
-    font-family: nintender;
-    font-size: 2em;
-}
-
-#game-boy {
-    font-family: Lato;
-    text-transform: uppercase;
-    font-style: italic;  
-    font-size: 2em;
-}
-
-#off-on {
-    display: inline-block;
-    font-family: sans-serif;
-    border-radius: 10px;
-    margin: 5px 85vw 0 5vw;
-    width: 95px;
 }
 
 #text-box {
@@ -429,18 +431,15 @@ button:focus {
     margin: 0 auto;
 }
 
-#muteButton {
-    display: inline-block;
-    height: 2vw; 
-    width: 2vw;
-    background-image: url("../img/sound-allowed.png");
-    background-repeat: no-repeat !important;
-    background-size: 100% 100%;
-    background-color: Transparent;
-    border: none;
-    position: relative;
-    top: 5px;
-    right: 1vw;
+
+#nintendo {
+    font-family: nintender;
+    font-size: 2em;
 }
 
-
+#game-boy {
+    font-family: Lato;
+    text-transform: uppercase;
+    font-style: italic;  
+    font-size: 2em;
+}
