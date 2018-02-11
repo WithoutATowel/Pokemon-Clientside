@@ -109,12 +109,12 @@ function movePlayer(direction) {
                     // swimAnimation();
                 } else if (squareType === 4) {
                     walkingAnimation(direction);
-                    // if (Math.random() < 0.15) {
-                    //     changeMusic("route1", "wildPokemonFight");
-                    //     playerState = "locked";
-                    //     walkingAnimation(direction);
-                    //     setTimeout(enterFightMode, 1000); 
-                    // }
+                    if (Math.random() < 0.15) {
+                        changeMusic("route1", "wildPokemonFight");
+                        playerState = "locked";
+                        walkingAnimation(direction);
+                        setTimeout(enterFightMode, 1000); 
+                    }
                 } else if (squareType === 5) {
                     jumpAnimation(direction);
                 }
@@ -527,10 +527,10 @@ function chooseMenuItem(options, callback) {
     }
     drawArrow();
 
-    // up + down buttons move the arrow around + add/remove "selectedOption" class
-    $(document).off("keydown");
-    $(document).on("keydown", function(event) {
-        switch (event.keyCode) {
+    function eventHandler(event) {
+        var token = event.keyCode ? event.keyCode : event.target.id;
+        switch (token) {
+            case "d-pad-up":
             case 38:
             case 87:
                 // up arrow & keyboard "w" button
@@ -542,6 +542,7 @@ function chooseMenuItem(options, callback) {
                 drawArrow();
                 menuSound.play();
                 break;
+            case "d-pad-down":
             case 40:
             case 83:
                 // down arrow & keyboard "s" button
@@ -553,22 +554,29 @@ function chooseMenuItem(options, callback) {
                 drawArrow();
                 menuSound.play();
                 break;
+            case "a-button":
             case 75:
                 //"k" button -> A. Return data-value of item with the "selectedOption" class.
-                $(document).off("keydown");
+                $(document).off();
                 callback(options[selectedOption].getAttribute("data-value"));
                 menuSound.play();
                 break;
+            case "b-button":
             case 76:
                 //"l" button -> B
-                $(document).off("keydown");
+                $(document).off();
                 cancelOrBack();
                 setGameControls();
                 menuSound.play();
                 break;
             default:
         };
-    });
+    }
+
+    // up + down buttons move the arrow around + add/remove "selectedOption" class
+    $(document).off();
+    $(document).on("keydown", eventHandler);
+    $(document).on("mousedown", eventHandler);
 }
 
 function buttonPress(button) {
@@ -610,12 +618,17 @@ function enterFightMode() {
     $("#battleText").show();
     $("#battleScreen").show("pulsate");
     $("#enemyPokemonImage").show("slide", { direction : "right", distance : 300 }, 800);
-    $(document).off("keydown");
+    $(document).off();
     $(document).on("keydown", function(event) {
-        if (event.keyCode === 75) {
+        if (event.keyCode === 65 || event.keyCode === 75) {
             takeTurn();
         }
     });
+    $(document).on("click", function(event) {
+        if (event.target.id === "a-button" || event.target.id === "b-button") {
+            takeTurn();
+        }
+    })
 }
 
 // This function allows players to make moves, and gets called over and over until one Pokemon is defeated.
@@ -681,7 +694,12 @@ function takeTurn(moveIndex) {
             }, 500);
             turn--;
             $(document).on("keydown", function(event) {
-                if (event.keyCode === 75) {
+                if (event.keyCode === 65 || event.keyCode === 75) {
+                    takeTurn();
+                }
+            });
+            $(document).on("click", function(event) {
+                if (event.target.id === "a-button" || event.target.id === "b-button") {
                     takeTurn();
                 }
             });
@@ -711,9 +729,9 @@ function pokemonDefeated(defeatedPokemon, playerWonBool) {
         $("#friendlyPokemonImage").hide("pulsate");
     }
 
-    $(document).off();
-    $(document).on("keydown", function(event) {
-        if (event.keyCode === 65 || 75) {
+    function eventHandler(event) {
+        var token = event.keyCode ? event.keyCode : event.target.id;
+        if (token === 65 || token === 75 || token === "a-button" || token === "b-button") {
             cancelOrBack();
             if (playerWonBool) {
                 if (checkWin()) {
@@ -724,6 +742,7 @@ function pokemonDefeated(defeatedPokemon, playerWonBool) {
                 } else {
                     $(document).off();
                     setGameControls();
+                    playerState = "standing"
                 } 
             } else {
                 loadNewMapArea("pallet");
@@ -733,7 +752,11 @@ function pokemonDefeated(defeatedPokemon, playerWonBool) {
             }
             enemyTrainer = null;
         }
-    });
+    }
+
+    $(document).off();
+    $(document).on("keydown", eventHandler);
+    $(document).on("mousedown", eventHandler);
 }
 
 function levelUp(){
@@ -746,14 +769,19 @@ function levelUp(){
     $("#levelUpText").text(myPokemon.name + " has reached level " + myPokemon.level + "!");
     $("#levelUpScreen").show().css("display", "flex");
     $("#battleScreen").hide();
-    $(document).off();
-    $(document).on("keydown", function(event) {
-        if (event.keyCode === 65 || 75) {
+
+    function eventHandler(event) {
+        var token = event.keyCode ? event.keyCode : event.target.id;
+        if (token === 65 || token === 75 || token === "a-button" || token === "b-button") {
             cancelOrBack();
             $(document).off();
             setGameControls();
         }
-    });
+    }
+
+    $(document).off();
+    $(document).on("keydown", eventHandler);
+    $(document).on("mousedown", eventHandler);
 }
 
 function startMenu() {
@@ -762,63 +790,70 @@ function startMenu() {
 }
 
 function setGameControls() {
-    $(document).on("keydown", function(event) {
-        switch (event.keyCode) {
+    var moveInterval = null;
+
+    function eventHandler(event) {
+        
+        var token = event.keyCode ? event.keyCode : event.target.id;
+        switch (token) {
+            case "d-pad-left":
+                moveInterval = setInterval(function() { movePlayer("left") }, 100);
             case 37:
-                //left arrow
-                movePlayer("left");
-                break;
             case 65:
-                //keyboard "a" button
+                // D-pad left, left arrow, keyboard "a" button
                 movePlayer("left");
                 break;
+            case "d-pad-up":
+                moveInterval = setInterval(function() { movePlayer("up") }, 100);
             case 38:
-                //up arrow
-                movePlayer("up");
-                break;
             case 87:
-                //keyboard "w" button
+                // D-pad up, up arrow, keyboard "w" button
                 movePlayer("up");
                 break;
+            case "d-pad-right":
+                moveInterval = setInterval(function() { movePlayer("right") }, 100);
             case 39:
-                //right arrow
-                movePlayer("right");
-                break;
             case 68:
-                //keyboard "d" button
+                // D-pad right, right arrow, keyboard "d" button
                 movePlayer("right");
                 break;
+            case "d-pad-down":
+                moveInterval = setInterval(function() { movePlayer("down") }, 100);
             case 40:
-                //down arrow
-                movePlayer("down");
-                break;
             case 83:
-                //keyboard "s" button
+                //D-pad down, down arrow, keyboard "s" button
                 movePlayer("down");
                 break;
+            case "a-button":
             case 75:
-                //"k" button -> A
+                // a-button, keyboard "k" button
                 if (playerState !== "locked") {
                     interactOrSelect();
                 } else {
                     cancelOrBack();
                 }
                 break;
+            case "b-button":
             case 76:
-                //"l" button -> B
+                // b-button, keyboard "l" button
                 cancelOrBack();
                 break;
+            case "select":
             case 71:
-                //"g" button -> select
+                // select, keyboard "g" button
                 buttonPress("select");
                 break;
+            case "start":
             case 72:
-                //"h" button -> start
+                // start, keyboard "h" button
                 startMenu("start");
                 break;
             default:
         };          
-    });
+    }
+
+    $(document).on("keydown", eventHandler);
+    $(document).on("mousedown", eventHandler);
 
     $(document).on("keyup", function(event) {
         var gameButtons = [37, 65, 38, 87, 39, 68, 40, 83];
@@ -828,38 +863,12 @@ function setGameControls() {
         }
     });
 
-    $(document).on("mousedown", function(event) { 
-        switch (event.target.id) {
-            case "d-pad-left":
-                movePlayer("left");
-                break;
-            case "d-pad-up":
-                movePlayer("up");
-                break;
-            case "d-pad-right":
-                movePlayer("right");
-                break;
-            case "d-pad-down":
-                movePlayer("down");
-                break;
-            case "a-button":
-                if (playerState !== "locked") {
-                    interactOrSelect();
-                } else {
-                    cancelOrBack();
-                }
-                break;
-            case "b-button":
-                cancelOrBack();
-                break;
-            case "select":
-                buttonPress("select");
-                break;
-            case "start":
-                startMenu("start");
-                break;
-            default:
-        };
+    $(document).on("mouseup", function(event) {
+        clearInterval(moveInterval);
+        if (playerState === "walking") {
+            playerState = "standing";
+            walkingAnimation(playerDirection);
+        }
     });
 }
 
