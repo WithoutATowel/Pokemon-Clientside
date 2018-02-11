@@ -11,7 +11,8 @@
     <body>
         <div class="container">
             <div class="row-1">
-                <button id="off-on">&#9664; OFF - ON &#9658;</button>
+                <button id="off-on" class="game-control">&#9664; OFF - ON &#9658;</button>
+                <button id="muteButton" class="game-control"></button>
                 <hr>
             </div>
             <div class="row-2">
@@ -19,22 +20,22 @@
                     <div id="d-pad-and-start-select-box">
                         <div id="d-pad">
                             <div></div>
-                            <div id="d-pad-up" class="pad-square"></div>
+                            <div id="d-pad-up" class="pad-square game-control"></div>
                             <div></div>
-                            <div id="d-pad-left" class="pad-square"></div>
-                            <div id= "d-pad-center" class="pad-square"></div>
-                            <div id="d-pad-right" class="pad-square"></div>
+                            <div id="d-pad-left" class="pad-square game-control"></div>
+                            <div id= "d-pad-center" class="pad-square game-control"></div>
+                            <div id="d-pad-right" class="pad-square game-control"></div>
                             <div></div>
-                            <div id="d-pad-down" class="pad-square"></div>
+                            <div id="d-pad-down" class="pad-square game-control"></div>
                             <div></div>
                         </div>
                         <div id="select-and-start-box">
                             <div id="select">
-                                <button class="pill-button"></button>
+                                <button class="pill-button game-control"></button>
                                 <p>Select</p>
                             </div>
                             <div id="start">
-                                <button class="pill-button"></button>
+                                <button class="pill-button game-control"></button>
                                 <p>Start</p>
                             </div>
                         </div>
@@ -92,12 +93,12 @@
                                 </div>
                                 <div id="levelUpScreen">
                                     <p>Contratulations!</p> 
-                                    <img id="pokemonLargeImage"></div>
+                                    <img id="pokemonLargeImage">
                                     <p id="levelUpText"></p>
                                 </div>
                                 <div id="winScreen">
                                     <p>Congratulations!</p> 
-                                    <p>You're a Pokemon master!</p>
+                                    <p>You've defeated the Final Four!</p>
                                 </div>
                             </div>
                         </div>
@@ -112,11 +113,11 @@
                 <div class="col-2-3">
                     <div id="a-b-button-box" class="vertical-center">
                         <div id="a-box">
-                            <button class="round-button" id="b-button"></button>
+                            <button class="round-button game-control" id="a-button"></button>
                             <p>A</p>
                         </div>
                         <div id="b-box">
-                            <button class="round-button" id="a-button"></button>
+                            <button class="round-button game-control" id="b-button"></button>
                             <p>B</p>
                         </div>
                     </div>

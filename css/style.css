@@ -14,6 +14,9 @@ html, body {
   color: #032760;
   text-align: center; }
 
+button:focus {
+  outline: 0; }
+
 #select-and-start-box p {
   margin: 10px 0 0 0; }
 
@@ -48,6 +51,9 @@ html, body {
   justify-content: center;
   align-items: center;
   position: relative; }
+
+.game-control:hover {
+  cursor: pointer; }
 
 .pill-button {
   display: block;
@@ -347,9 +353,28 @@ html, body {
   background-size: 100% 100%;
   text-align: center;
   position: absolute;
-  font-size: 1em;
+  font-size: 2em;
   left: 0;
   top: 0;
   z-index: 100; }
+
+#pokemonLargeImage {
+  height: 15vw;
+  width: 15vw;
+  image-rendering: pixelated;
+  margin: 0 auto; }
+
+#muteButton {
+  display: inline-block;
+  height: 2vw;
+  width: 2vw;
+  background-image: url("../img/sound-allowed.png");
+  background-repeat: no-repeat !important;
+  background-size: 100% 100%;
+  background-color: Transparent;
+  border: none;
+  position: relative;
+  top: 5px;
+  right: 1vw; }
 
 /*# sourceMappingURL=style.css.map */
