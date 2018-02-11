@@ -5,8 +5,8 @@
             "maxHP" : 10,
             "level" : 5,
             "moves" : [0, 1],
-            "attack" : 11,
-            "defense" : 9,
+            "attack" : 12,
+            "defense" : 10,
             "frontImage" : "img/pokemon/front/bulbasaur.png",
             "backImage" : "img/pokemon/back/bulbasaur.png"
         },
@@ -15,8 +15,8 @@
             "maxHP" : 10,
             "level" : 5,
             "moves" : [0, 2],
-            "attack" : 9,
-            "defense" : 11,
+            "attack" : 10,
+            "defense" : 12,
             "frontImage" : "img/pokemon/front/squirtle.png",
             "backImage" : "img/pokemon/back/squirtle.png"
         },
@@ -25,8 +25,8 @@
             "maxHP" : 9,
             "level" : 5,
             "moves" : [3, 1],
-            "attack" : 12,
-            "defense" : 8,
+            "attack" : 13,
+            "defense" : 9,
             "frontImage" : "img/pokemon/front/charmander.png",
             "backImage" : "img/pokemon/back/charmander.png"
         },

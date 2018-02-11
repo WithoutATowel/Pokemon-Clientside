@@ -27,7 +27,8 @@
                 "ashHouse1": [7, 6, "down"],
                 "rivalHouse": [7, 14, "down"],
                 "oakLab": [13, 13, "down"],
-                "route1": [2, 11, "down"]
+                "route1": [2, 11, "down"],
+                "finalFourLair": [2, 11, "down"]
             }
         ],
         "ashHouse1" : [

@@ -14,7 +14,6 @@
 // DONE
 
 // NEXT
-// Bug 2: sometimes the walking interval doesn't get cleared
 // Give HTML buttons cursor = pointer on hover
 // Make Growl do something
 // make walking over a fence force you to go an extra square
@@ -36,7 +35,7 @@ $(document).ready(function() {
     $.getJSON("data/pokedex.json").done(function(data) {
         pokedex = data.pokedex;
         pokeMoves = data.pokeMoves;
-        myPokemon = instantiatePokemon(0); //DON'T FORGET TO REMOVE THIS
+        myPokemon = instantiatePokemon(0, "player"); //DON'T FORGET TO REMOVE THIS
     });
     setGameControls();
     $("#muteButton").on("click", muteUnmute);
@@ -115,7 +114,7 @@ function movePlayer(direction) {
                         playerState = "locked";
                         $(document).trigger("mouseup");
                         walkingAnimation(direction);
-                        setTimeout(enterFightMode, 1000); 
+                        setTimeout(function() { enterFightMode("wild"); }, 1000); 
                     }
                 } else if (squareType === 5) {
                     jumpAnimation(direction);
@@ -219,7 +218,7 @@ function checkPermittedMove(direction) {
 function loadNewMapArea(name) {
     var lastLocation = currentLocation;
     currentLocation = name;
-    changeMusic(lastLocation, currentLocation, "loadNewMapArea");
+    changeMusic(lastLocation, currentLocation);
     mapWidth = mapLocations[currentLocation][0][1].length - 2;
     mapHeight = mapLocations[currentLocation][0].length - 2;
     playerDirection = mapLocations[currentLocation][1][lastLocation][2];
@@ -249,7 +248,7 @@ function loadNewMapArea(name) {
     }, 450);
 }
 
-function changeMusic(lastLocation, newLocation, source) {
+function changeMusic(lastLocation, newLocation) {
 
     function fadeSwitch(file){
         var turnDown = setInterval(function() {
@@ -275,7 +274,7 @@ function changeMusic(lastLocation, newLocation, source) {
             doorSound.play();
             break;
         case "pallet":
-            if (lastLocation === "route1") {
+            if (lastLocation === "route1" || lastLocation === "finalFourLair") {
                 fadeSwitch("pallet.mp3");
             } else {
                 doorSound.play();
@@ -395,26 +394,29 @@ function interactOrSelect() {
             break;
         default:
     }
-    if (targetSquare.toString()[0] === "2") { //MANUALLY STOP WALKING ANIMATION AND CLEAR INTERVAL HERE
+    if (targetSquare.toString()[0] === "2") { 
         // Static, interactive objects
         item = staticObjects[currentLocation][parseInt(targetSquare.toString()[1])];
         showText(item.text);
+        playerState = "locked"
+        $(document).trigger("mouseup");
+        walkingAnimation(playerDirection);
     } else if (targetSquare.toString()[0] === "6") {
         // NPCs
+        playerState = "locked"
+        $(document).trigger("mouseup");
+        walkingAnimation(playerDirection);
         item = allNPCs[currentLocation][parseInt(targetSquare.toString()[1])];
         if (item.healer && myPokemon.currentHP < myPokemon.maxHP) {
             myPokemon.currentHP = myPokemon.maxHP;
             showText(item.name + ": Here's some chocolate for your injured Pokemon. There you go, all better!");
         } else if (item.trainer) {
-            playerState = "locked"
-            $(document).trigger("mouseup");
-            walkingAnimation(playerDirection);
             enemyTrainer = allNPCs[currentLocation][parseInt(targetSquare.toString()[1])];
             showText(item.dialog);
             var trainerType = (enemyTrainer.finalFour) ? "finalFourFight" : "normalTrainerFight";
             changeMusic("", trainerType, "interactOrSelect");
             $(document).off();
-            setTimeout(enterFightMode, 1000);
+            setTimeout(function() { enterFightMode("trainer"); }, 1000);
         } else {
             showText(item.dialog);
         }
@@ -441,7 +443,7 @@ function takeItem(itemId) {
         item = claimableObjects[currentLocation][itemId];
         // Place item into appropriate location... inventory or pokedex 
         if (item.type === "pokemon") {
-            myPokemon = instantiatePokemon(item.pokeId);
+            myPokemon = instantiatePokemon(item.pokeId, "player");
         } else {
             inventory.push(item);
         }
@@ -467,27 +469,28 @@ function takeItem(itemId) {
     } 
 }
 
-function instantiatePokemon(pokeId) {
+function instantiatePokemon(pokeId, owner) {
     var myNewPokemon = Object.assign({}, pokedex[pokeId]);
 
+    // Set random attack and defense bonuses
     var attackBonus = Math.round(Math.random() * 3) - 1;
     myNewPokemon.attack += attackBonus;
-
     var defenseBonus = Math.round(Math.random() * 3) - 1;
     myNewPokemon.defense += defenseBonus;
 
-
-    if (pokeId === 0 || pokeId === 1 || pokeId === 2) {
+    // Adjust level and experience based on owner type
+    if (owner === "player") {
         var expNeeded = 10 * myNewPokemon.level;
         myNewPokemon.expNeeded = expNeeded;
         myNewPokemon.currentExp = 0;
-    } else {
-        var levelBonus = Math.round(Math.random());
-        myNewPokemon.level += levelBonus;
+    } else if (owner === "trainer") {
+        myNewPokemon.level += Math.round(Math.random());
+    } else if (owner === "wild") {
+        myNewPokemon.level = myPokemon.level - Math.round(Math.random() + 2);
     }
 
-
-    var maxHPBonus = (myNewPokemon.level - 4) * (Math.round(Math.random() * 3) - 1);
+    // Past level 4, new pokemon receive a scaling health bonus
+    var maxHPBonus = Math.min(0, (myNewPokemon.level - 4)) * (Math.round(Math.random() * 3) - 1);
     var newMaxHP = pokedex[pokeId].maxHP + 2 * myNewPokemon.level + maxHPBonus;
     myNewPokemon.maxHP = newMaxHP;
     myNewPokemon.currentHP = newMaxHP;
@@ -589,9 +592,17 @@ function buttonPress(button) {
     console.log(button, "was pressed");
 }
 
-function enterFightMode() {
-    turn = 0;
-    ranPokemon = instantiatePokemon(Math.round(Math.random() * 3) + 3);
+function enterFightMode(enemyType) {
+    // Generate a random Pokemon
+    var pokemonIndex = 0;
+    if (enemyType === "wild") {
+        pokemonIndex = (Math.round(Math.random() * 3) + 3);
+    } else if (enemyType === "trainer") {
+        pokemonIndex = Math.round(Math.random() * 6);
+    }
+    ranPokemon = instantiatePokemon(pokemonIndex, enemyType);
+
+
     $("#enemyPokemonName").text(ranPokemon.name.toUpperCase());
     $("#enemyPokemonHealthBar").css("width", "8.1vw"); //this is a magic number
     $("#enemyPokemonLevel").text(ranPokemon.level);
@@ -626,11 +637,13 @@ function enterFightMode() {
     $(document).off();
     $(document).on("keydown", function(event) {
         if (event.keyCode === 65 || event.keyCode === 75) {
+            turn = 0;
             takeTurn();
         }
     });
     $(document).on("click", function(event) {
         if (event.target.id === "a-button" || event.target.id === "b-button") {
+            turn = 0;
             takeTurn();
         }
     })
@@ -729,7 +742,7 @@ function pokemonDefeated(defeatedPokemon, playerWonBool) {
         } else {
             changeMusic("fight", currentLocation, "pokemonDefeated, wild pokemon fight");
         }
-        myPokemon.currentExp += ranPokemon.level * 2;
+        myPokemon.currentExp += 5 + ranPokemon.level * 2;
     } else {
         $("#friendlyPokemonImage").hide("pulsate");
     }
@@ -783,6 +796,7 @@ function levelUp(){
         var token = event.keyCode ? event.keyCode : event.target.id;
         if (token === 65 || token === 75 || token === "a-button" || token === "b-button") {
             cancelOrBack();
+            playerState = "standing";
             $(document).off();
             setGameControls();
         }
@@ -806,28 +820,28 @@ function setGameControls() {
         var token = event.keyCode ? event.keyCode : event.target.id;
         switch (token) {
             case "d-pad-left":
-                moveInterval = setInterval(function() { movePlayer("left"); console.log("left"); }, 100);
+                moveInterval = setInterval(function() { movePlayer("left") }, 100);
             case 37:
             case 65:
                 // D-pad left, left arrow, keyboard "a" button
                 movePlayer("left");
                 break;
             case "d-pad-up":
-                moveInterval = setInterval(function() { movePlayer("up"); console.log("up"); }, 100);
+                moveInterval = setInterval(function() { movePlayer("up"); }, 100);
             case 38:
             case 87:
                 // D-pad up, up arrow, keyboard "w" button
                 movePlayer("up");
                 break;
             case "d-pad-right":
-                moveInterval = setInterval(function() { movePlayer("right"); console.log("right"); }, 100);
+                moveInterval = setInterval(function() { movePlayer("right"); }, 100);
             case 39:
             case 68:
                 // D-pad right, right arrow, keyboard "d" button
                 movePlayer("right");
                 break;
             case "d-pad-down":
-                moveInterval = setInterval(function() { movePlayer("down"); console.log("down"); }, 100);
+                moveInterval = setInterval(function() { movePlayer("down"); }, 100);
             case 40:
             case 83:
                 //D-pad down, down arrow, keyboard "s" button
