@@ -14,7 +14,9 @@
 // DONE
 
 // NEXT
-// Make d-pad + buttons work
+// Bug 1: hitting "A" to get past "pokemon fainted" triggers trainer fights
+// Bug 2: sometimes the walking interval doesn't get cleared
+// Give HTML buttons cursor = pointer on hover
 // Make Growl do something
 // make walking over a fence force you to go an extra square
 // Responsive + mediaqueries
@@ -797,28 +799,28 @@ function setGameControls() {
         var token = event.keyCode ? event.keyCode : event.target.id;
         switch (token) {
             case "d-pad-left":
-                moveInterval = setInterval(function() { movePlayer("left") }, 100);
+                moveInterval = setInterval(function() { movePlayer("left"); console.log("left"); }, 100);
             case 37:
             case 65:
                 // D-pad left, left arrow, keyboard "a" button
                 movePlayer("left");
                 break;
             case "d-pad-up":
-                moveInterval = setInterval(function() { movePlayer("up") }, 100);
+                moveInterval = setInterval(function() { movePlayer("up"); console.log("up"); }, 100);
             case 38:
             case 87:
                 // D-pad up, up arrow, keyboard "w" button
                 movePlayer("up");
                 break;
             case "d-pad-right":
-                moveInterval = setInterval(function() { movePlayer("right") }, 100);
+                moveInterval = setInterval(function() { movePlayer("right"); console.log("right"); }, 100);
             case 39:
             case 68:
                 // D-pad right, right arrow, keyboard "d" button
                 movePlayer("right");
                 break;
             case "d-pad-down":
-                moveInterval = setInterval(function() { movePlayer("down") }, 100);
+                moveInterval = setInterval(function() { movePlayer("down"); console.log("down"); }, 100);
             case 40:
             case 83:
                 //D-pad down, down arrow, keyboard "s" button
