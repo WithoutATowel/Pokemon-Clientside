@@ -1,5 +1,5 @@
-$edgeLength: 2.5vw;
 $dPadBorderRadius: 3px;
+$desktopEdgeLength: 2.5vw;
 
 @font-face {
     font-family: "nintender";
@@ -21,15 +21,10 @@ html, body {
     padding: 0;
     background: #d0cfcb;
     color: rgb(3, 39, 96);
-    text-align: center;
 }
 
 button:focus {
-    outline:0;
-}
-
-#select-and-start-box p {
-    margin: 10px 0 0 0;
+    outline: 0;
 }
 
 .vertical-center {
@@ -38,58 +33,28 @@ button:focus {
     transform: translateY(-50%);
 }
 
+.x-y-center {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.game-control:hover {
+    cursor: pointer;
+}
+
 .container {
     display: grid;
     grid-template-rows: 15% 85%;
     height: 100vh;
 }
 
-.row-1 {
-}
-
-.row-2 {
+.controls-and-screen {
     display: grid;
     grid-template-columns: 20% 60% 20%;
 }
 
-.col-2-1 {
-    position: relative;
-}
-
-.col-2-2 {
-    display: grid;
-    grid-template-rows: 80% 20%;
-}
-
-.col-2-3 {
-}
-
-
-.row-2-2-1 {
-    background: #505260;
-    display: grid;
-    grid-template-columns: 15% 70% 15%;
-    border-radius: 15px 15px 75px  15px;
-}
-
-.row-2-2-2 {
-}
-
-.col-2-2-1-1 {
-}
-
-.col-2-2-1-2 {
-    justify-content: center;
-    align-items: center;
-    position: relative;
-}
-
-.col-2-2-1-3 {
-}
-
-.game-control:hover {
-    cursor: pointer;
-}
 
 .pill-button {
     display: block;
@@ -99,28 +64,6 @@ button:focus {
     background: rgb(88, 88, 88);
 }
 
-#select, #start {
-    display: inline-block;
-    transform: rotate(-20deg);
-    text-align: center;
-    font-family: quantifier;
-}
-
-#start {
-    margin-left: 10px;
-}
-
-#a-box, #b-box {
-    display: inline-block;
-    text-align: center;
-    font-family: quantifier;
-    margin-left: 2vw;
-}
-
-#a-box {
-    margin-left: 2vw;
-}
-
 .round-button {
     width: 7vw;
     height: 7vw;
@@ -128,14 +71,62 @@ button:focus {
     background: rgb(150, 36, 93);
 }
 
-#a-b-button-box {
-    transform: rotate(-20deg);
-    font-size: 2em;
-}
-
 .pad-square {
     background-color: black;
     border: none;
+}
+
+.screen-section {
+    display: grid;
+    grid-template-rows: 80% 20%;
+}
+
+.dark-gray-area {
+    background: #505260;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    border-radius: 15px 15px 75px  15px;
+}
+
+.npc, .claimableObject {
+    width: $desktopEdgeLength;
+    height: $desktopEdgeLength;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100%;
+    position: absolute;
+}
+
+#off-on {
+    display: inline-block;
+    font-family: sans-serif;
+    background: #d0cfcb;
+    border: 1px solid #a0a09d; 
+    border-radius: 10px;
+    position: relative;
+    left: 4vw;
+    width: 95px;
+    margin-top: 8px;
+}
+
+#muteButton {
+    display: inline-block;
+    height: 2vw; 
+    width: 2vw;
+    background-image: url("../img/sound-allowed.png");
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    background-color: Transparent;
+    border: none;
+    position: absolute;
+    right: 1.5vw;
+    margin-top: 5px;
+}
+
+#left-controls {
+    position: relative;
 }
 
 #d-pad {
@@ -143,7 +134,7 @@ button:focus {
     grid-template: repeat(3, 1fr) / repeat(3, 1fr);
     width: 11vw;
     height: 11vw;
-    margin: 0 auto 40px;
+    margin-bottom: 40px;
 }
 
 #d-pad-up {
@@ -164,137 +155,115 @@ button:focus {
 
 #d-pad-center {
     border: 2px solid black;
-    z-index: 2;
 }
 
-#d-pad-and-start-select-box {
-    position: absolute;
-    top: 40%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+#select-and-start-box p {
+    margin-top: 10px;
 }
 
-#screenBox {
-    display: flex;
-    width: 11 * $edgeLength;
-    height: 11 * $edgeLength;
+#select, #start, #a-box, #b-box {
+    display: inline-block;
+    text-align: center;
+    font-family: quantifier;
+}
+
+#select, #start {
+    transform: rotate(-20deg);
+}
+
+#start {
+    margin-left: 10px;
+}
+
+#a-box, #b-box {
+    margin-left: 2vw;
+}
+
+#a-b-button-box {
+    transform: rotate(-20deg);
+    font-size: 2em;
+}
+
+#screen-box {
+    width: 11 * $desktopEdgeLength;
+    height: 11 * $desktopEdgeLength;
     background-color: rgb(0,0,0);  //#485100; green screen
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    image-rendering: pixelated;
+    position: relative;
     border: 2px solid black;
     overflow: hidden;
     font-family: pokemon;
     font-size: 1vw;
     color: black;
+    text-align: left;
 }
 
 #screen {
-    width: 20 * $edgeLength;
-    height: 18 * $edgeLength;
-    background-image: url(../img/pallet.png);
-    image-rendering: pixelated;
-    background-repeat: no-repeat !important;
+    width: 20 * $desktopEdgeLength;
+    height: 18 * $desktopEdgeLength;
+    background-image: url("../img/pallet.png");
+    background-repeat: no-repeat;
     background-size: 100%;
-    transition: top 0.25s linear,
-        left 0.25s linear;
+    transition: top 0.25s linear, left 0.25s linear;
     position: absolute;
-    left: 0;
-    top: -1 * $edgeLength;
+    top: -1 * $desktopEdgeLength;
 }
 
 #player {
-    width: $edgeLength;
-    height: $edgeLength;
-    background-image: url(../img/ash-sprite.png);
-    image-rendering: pixelated;
-    background-repeat: no-repeat !important;
+    width: $desktopEdgeLength;
+    height: $desktopEdgeLength;
+    background-image: url("../img/ash-sprite.png");
+    background-repeat: no-repeat;
     background-position: 0% 0%;
-    background-size: 400% !important;
+    background-size: 400%;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
 }
 
-.npc, .claimableObject {
-    width: $edgeLength;
-    height: $edgeLength;
-    image-rendering: pixelated;
-    background-repeat: no-repeat !important;
-    background-position: center;
-    background-size: 100% !important;
-    position: absolute;
-}
-
-#nintendo {
-    font-family: nintender;
-    font-size: 2em;
-}
-
-#game-boy {
-    font-family: Lato;
-    text-transform: uppercase;
-    font-style: italic;  
-    font-size: 2em;
-}
-
-#off-on {
-    display: inline-block;
-    font-family: sans-serif;
-    border-radius: 10px;
-    margin: 5px 85vw 0 5vw;
-    width: 95px;
-}
-
-#textBox {
+#text-box {
     display: none;
     position: absolute;
     bottom: 0;
-    text-align: left;
-    color: black;
 }
 
-#confirm {
+#confirm-box {
     display: none;
-    width: 2 * $edgeLength;
+    width: 2 * $desktopEdgeLength;
     height: 2.7vw;
     float: right;
-    background-image: url(../img/confirm.png);
+    background-image: url("../img/confirm.png");
     padding: 5%;
-    background-size: 100% !important;
-    background-repeat: no-repeat !important;
-    image-rendering: pixelated;
+    background-size: 100%;
+    background-repeat: no-repeat;
 }
 
-#confirm > div {
+#confirm-box > div {
     display: inline-block;
 }
 
-#confirm p {
+#confirm-box p {
     margin: 0;
     padding: 0;
 }
 
 #text {
-    background-image: url(../img/text-box.png);
-    width: 9 * $edgeLength;
+    background-image: url("../img/text-box.png");
+    width: 9 * $desktopEdgeLength;
     min-height: 3.5vw;
-    background-size: 100% !important;
-    background-repeat: no-repeat !important;
-    image-rendering: pixelated;
+    background-size: 100%;
+    background-repeat: no-repeat;
     clear: both;
     padding: 2.5vw 2.5vw 2.1vw 2.5vw;;
 }
 
-#battleScreen {
+#battle-screen {
     display: none;
-    width: 11 * $edgeLength;
-    height: 11 * $edgeLength;
-    background-image: url(../img/battleScreen.png);
-    image-rendering: pixelated;
-    background-repeat: no-repeat !important;
+    width: 11 * $desktopEdgeLength;
+    height: 11 * $desktopEdgeLength;
+    background-image: url("../img/battleScreen.png");
+    background-repeat: no-repeat;
     background-size: 100% 100%;
     background-color: #f8f8f8;
     position: absolute;
@@ -302,27 +271,28 @@ button:focus {
     top: 0;
     z-index: 10;
 }
-#enemyPokemonName, #enemyPokemonLevel, #enemyPokemonHealthBar, #friendlyPokemonName, #friendlyPokemonLevel, 
-#friendlyPokemonHealthBar, #friendlyPokemonHealthNum, #battleText, #friendlyPokemonImage, #enemyPokemonImage, #battleOptions{
+
+#enemy-pokemon-name, #enemy-pokemon-level, #enemy-pokemon-health-bar, #friendly-pokemon-name, 
+#friendly-pokemon-level, #friendly-pokemon-health-bar, #friendly-pokemon-health-num, #battle-text, 
+#friendly-pokemon-image, #enemy-pokemon-image, #battle-options {
     position: absolute;
 }
 
-#enemyPokemonName {
+#enemy-pokemon-name {
     top: 0.5vw;
     left: 2vw;
     height: 1.5vw;
     width: 12vw;
-    text-align: left;
 }
 
-#enemyPokemonLevel {
+#enemy-pokemon-level {
     top: 1.9vw;
     left: 6.75vw;
     height: 1.5vw;
     width: 1.5vw;
 }
 
-#enemyPokemonHealthBar {
+#enemy-pokemon-health-bar {
     background-color: rgb(230, 230, 230);
     top: 3.8vw;
     left: 5.6vw;
@@ -331,7 +301,7 @@ button:focus {
     transition: width 0.5s ease;
 }
 
-#friendlyPokemonName {
+#friendly-pokemon-name {
     top: 11.25vw;
     right: 2vw;
     height: 1.5vw;
@@ -339,14 +309,14 @@ button:focus {
     text-align: right;
 }
 
-#friendlyPokemonLevel {
+#friendly-pokemon-level {
     top: 12.5vw;
     right: 5.5vw;
     height: 1.5vw;
     width: 1.5vw;
 }
 
-#friendlyPokemonHealthBar {
+#friendly-pokemon-health-bar {
     background-color: rgb(230, 230, 230);
     top: 14.5vw;
     left: 16.6vw;
@@ -355,40 +325,38 @@ button:focus {
     transition: width 0.5s ease;
 }
 
-#friendlyPokemonHealthNum {
+#friendly-pokemon-health-num {
     top: 15.5vw;
     right: 4.25vw;
     height: 2vw;
     width: 6.5vw;
 }
 
-#battleText {
+#battle-text {
     bottom: 1vw;
     left: 1vw;
     height: 5vw;
     width: 23.4vw;
-    text-align: left;
     padding: 1vw;
 }
 
-#battleOptions {
+#battle-options {
     display: none;
     bottom: 1vw;
     left: 1vw;
     height: 5vw;
     width: 23.4vw;
-    text-align: left;
     padding: 1vw;
 }
 
-#friendlyPokemonImage {
+#friendly-pokemon-image {
     bottom: 6.75vw;
     left: 1vw;
     height: 11vw;
     width: 11vw;
 }
 
-#enemyPokemonImage {
+#enemy-pokemon-image {
     top: 2vw;
     right: 2vw;
     height: 10vw;
@@ -404,59 +372,40 @@ button:focus {
     padding: 0;
 }
 
-#winScreen {
+#win-screen, #level-up-screen {
     display: none;
     flex-direction: column;
     justify-content: center;
-    width: 11 * $edgeLength;
-    height: 11 * $edgeLength;
-    background-color: #f8f8f8;
-    background-repeat: no-repeat !important;
-    background-size: 100% 100%;
+    align-items: center;
     text-align: center;
-    position: absolute;
-    font-size: 2em;
-    left: 0;
-    top: 0;
-    z-index: 100;
-}
-
-#levelUpScreen {
-    display: none;
-    flex-direction: column;
-    justify-content: center;
-    width: 11 * $edgeLength;
-    height: 11 * $edgeLength;
+    width: 11 * $desktopEdgeLength;
+    height: 11 * $desktopEdgeLength;
     background-color: #f8f8f8;
-    background-repeat: no-repeat !important;
-    background-size: 100% 100%;
-    text-align: center;
-    position: absolute;
-    font-size: 2em;
-    left: 0;
-    top: 0;
-    z-index: 100;
-}
-
-#pokemonLargeImage {
-    height: 6 * $edgeLength;
-    width: 6 * $edgeLength;
-    image-rendering: pixelated;
-    margin: 0 auto;
-}
-
-#muteButton {
-    display: inline-block;
-    height: 2vw; 
-    width: 2vw;
-    background-image: url("../img/sound-allowed.png");
-    background-repeat: no-repeat !important;
-    background-size: 100% 100%;
-    background-color: Transparent;
-    border: none;
     position: relative;
-    top: 5px;
-    right: 1vw;
+    font-size: 2em;
+    z-index: 100;
 }
 
+#win-screen {
+    z-index: 1000;
+}
 
+#pokemon-large-image {
+    height: 6 * $desktopEdgeLength;
+    width: 6 * $desktopEdgeLength;
+}
+
+#nintendo-text {
+    text-align: center;
+    font-size: 2em;
+}
+
+#nintendo {
+    font-family: nintender;
+}
+
+#game-boy {
+    font-family: Lato;
+    text-transform: uppercase;
+    font-style: italic;
+}

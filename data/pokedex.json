@@ -74,7 +74,7 @@
         },
         {
             "name" : "Growl",
-            "damage" : 0
+            "damage" : 20
         },
         {
             "name" : "Tail Whip",
