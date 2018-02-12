@@ -29,3 +29,7 @@ There are a number of features I'd like to add in the future:
 * "Turn Gameboy off/on"
 * Intro animation + explanation of game
 * Enter and store player's name at beginning of game
+
+## Acknowledgements
+* My sprites were sourced from [spriters-resource.com](https://www.spriters-resource.com/game_boy_gbc/pokemonredblue/)
+* Also, [dragonflycave.com](https://www.dragonflycave.com/mechanics/battling-basics) was key for understanding the pokemon fighting system well enough to build something with the same flavor.
