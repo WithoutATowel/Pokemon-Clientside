@@ -12,7 +12,6 @@ $(document).ready(function() {
     $.getJSON("data/pokedex.json").done(function(data) {
         pokedex = data.pokedex;
         pokeMoves = data.pokeMoves;
-        myPokemon = instantiatePokemon(0, "player"); //DON'T FORGET TO REMOVE THIS
     });
     setGameControls();
     $("#muteButton").on("click", muteUnmute);
