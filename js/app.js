@@ -1,14 +1,3 @@
-// LATER
-// Add NPC movement
-// Save game + load game
-// "Turn Gameboy off/on"
-// Intro animation + explanation of game
-// Enter and store player's name at beginning of game
-
-// NEXT
-// Clean code!!
-
-
 $(document).ready(function() {
     // Load data as global variables
     $.getJSON("data/NPCsAndObjects.json").done(function(data) {
@@ -558,10 +547,9 @@ function cancelOrBack() {
 function chooseMenuItem(options, callback) {
     var selectedOption = 0;
     
-    // Place an indicator arrow in the appropriate row, mark option with class "selectedOption"
+    // Place an indicator arrow in the appropriate row
     function drawArrow() {
         options[selectedOption].innerHTML = "&#9658;"
-        options[selectedOption].classList.add('selectedOption')
         for (i = 0; i < options.length; i++) {
             if (i !== selectedOption) {
                 options[i].innerHTML = "&nbsp;";
@@ -570,6 +558,7 @@ function chooseMenuItem(options, callback) {
     }
     drawArrow();
 
+    // Generalized event handler that can work with keydown or mousedown/click events
     function eventHandler(event) {
         var token = event.keyCode ? event.keyCode : event.target.id;
         switch (token) {
