@@ -16,8 +16,8 @@
                 <hr>
             </header>
             <main class="controls-and-screen">
-                <section class="left-controls">
-                    <div id="d-pad-and-start-select-box">
+                <section id="left-controls">
+                    <div class="x-y-center">
                         <div id="d-pad">
                             <div></div>
                             <div id="d-pad-up" class="pad-square game-control"></div>
@@ -43,71 +43,67 @@
                 </section>
                 <section class="screen-section">
                     <div class="dark-gray-area">
-                        <div class="power-on-light-box">
-                        </div>
-                        <div class="screen-box-container">
-                            <div id="screen-box">
-                                <div id="screen"></div>
-                                <div id="player"></div>
-                                <div id="text-box">
-                                    <div id="confirm-box">
-                                        <div id="confirm-options">
-                                            <div id="yes" data-value=""></div>
-                                            <div id="no" data-value="false"></div>
-                                        </div>
-                                        <div>
-                                            <p>Yes</p>
-                                            <p>No</p>
-                                        </div>
+                        <div id="screen-box">
+                            <div id="screen"></div>
+                            <div id="player"></div>
+                            <div id="text-box">
+                                <div id="confirm-box">
+                                    <div id="confirm-options">
+                                        <div id="yes" data-value=""></div>
+                                        <div id="no" data-value="false"></div>
                                     </div>
-                                    <div id="text">
+                                    <div>
+                                        <p>Yes</p>
+                                        <p>No</p>
                                     </div>
                                 </div>
-                                <div id="battle-screen">
-                                    <div id="enemy-pokemon-name"></div>
-                                    <div id="enemy-pokemon-level"></div>
-                                    <div id="enemy-pokemon-health-bar"></div>
-                                    <img id="enemy-pokemon-image" src="" alt="Enemy pokemon">
-                                    <div id="friendly-pokemon-name"></div>
-                                    <div id="friendly-pokemon-level"></div>
-                                    <div id="friendly-pokemon-health-bar"></div>
-                                    <div id="friendly-pokemon-health-num"></div>
-                                    <div id="battle-text"></div>
-                                    <div id="battle-options">
-                                        <div id="moves">
-                                            <div id="move-options">
-                                                <div data-value="0"></div>
-                                                <div data-value="1"></div>
-                                                <div data-value="2"></div>
-                                                <div data-value="3"></div>
-                                            </div>
-                                            <div id="move-options-text">
-                                                <p></p>
-                                                <p></p>
-                                                <p></p>
-                                                <p></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <img id="friendly-pokemon-image" src="" alt="Friendly pokemon">
-                                </div>
-                                <div id="level-up-screen">
-                                    <p>Contratulations!</p> 
-                                    <img id="pokemon-large-image">
-                                    <p id="level-up-text"></p>
-                                </div>
-                                <div id="win-screen">
-                                    <p>Congratulations!</p> 
-                                    <p>You've defeated the Final Four!</p>
+                                <div id="text">
                                 </div>
                             </div>
+                            <div id="battle-screen">
+                                <div id="enemy-pokemon-name"></div>
+                                <div id="enemy-pokemon-level"></div>
+                                <div id="enemy-pokemon-health-bar"></div>
+                                <img id="enemy-pokemon-image" src="" alt="Enemy pokemon">
+                                <div id="friendly-pokemon-name"></div>
+                                <div id="friendly-pokemon-level"></div>
+                                <div id="friendly-pokemon-health-bar"></div>
+                                <div id="friendly-pokemon-health-num"></div>
+                                <div id="battle-text"></div>
+                                <div id="battle-options">
+                                    <div id="moves">
+                                        <div id="move-options">
+                                            <div data-value="0"></div>
+                                            <div data-value="1"></div>
+                                            <div data-value="--"></div>
+                                            <div data-value="--"></div>
+                                        </div>
+                                        <div id="move-options-text">
+                                            <p></p>
+                                            <p></p>
+                                            <p></p>
+                                            <p></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <img id="friendly-pokemon-image" src="" alt="Friendly pokemon">
+                            </div>
+                            <div id="level-up-screen">
+                                <p>Contratulations!</p> 
+                                <img id="pokemon-large-image">
+                                <p id="level-up-text"></p>
+                            </div>
+                            <div id="win-screen">
+                                <p>Congratulations!</p> 
+                                <p>You've defeated the Final Four!</p>
+                            </div>
                         </div>
-                        <div></div>
                     </div>
-                    <div>
+                    <div id="nintendo-text">
                         <p>
                             <span id="nintendo">Nintendo</span>
                             <span id="game-boy">Game Boy</span>
+                        </p>
                     </div>
                 </section>
                 <section class="right-controls">

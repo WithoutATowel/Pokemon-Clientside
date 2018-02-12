@@ -2,17 +2,12 @@
 // Add NPC movement
 // Save game + load game
 // "Turn Gameboy off/on"
-// Intro animation
-// Make Growl do something
-// Start game in Ashe's room?
-// create "keyboard" menu for entering your player's name. Store it in localStorage.
-
+// Intro animation + explanation of game
+// Enter and store player's name at beginning of game
 
 // NEXT
 // Clean code!!
-// Responsive + mediaqueries
-// Add animations to show button presses (regardless of input method used)
-// Prevent selecting invalid menu options
+
 
 $(document).ready(function() {
     // Load data as global variables
@@ -32,25 +27,30 @@ $(document).ready(function() {
     });
     setGameControls();
     $("#muteButton").on("click", muteUnmute);
+
+    //muteUnmute function assumes button has just been clicked, so swap retrieved "mute" value
     mute = (localStorage.mute === "true") ? false : true;
     muteUnmute();
     mapMusic.play();
 });
 
+// Declare global variables, mostly player-state related
+var currentLocation = "pallet";
+var mapWidth = 0;
+var mapHeight = 0;
 var squareSize = 2.5;
 var playerY = 7; 
 var playerX = 6;
 var playerState = "standing";
 var playerDirection = "down";
-var walkingInterval = null;
+var moveInterval = null;
+var walkingAnimationInterval = null;
+var walkingSpriteToken = 0;
 var moving = false;
-var token = 0;
-var currentLocation = "pallet";
-var mapWidth = 0;
-var mapHeight = 0;
 var inventory = [];
 var myPokemon = null;
 var ranPokemon = null;
+var inFight = false;
 var enemyTrainer = null;
 var turn = 0;
 
@@ -63,17 +63,19 @@ var damageSound = new Audio("music/damage.wav");
 var defeatSound = new Audio("music/defeated.wav");
 var explosionSound = new Audio("music/explosion.wav");
 mapMusic.volume = 0.25;
-mapMusic.loop = true;
 walkingSound.volume = 0.1;
-walkingSound.loop = true;
 menuSound.volume = 0.5;
 explosionSound.volume = 0.5;
+mapMusic.loop = true;
+walkingSound.loop = true;
 
 
+// Function to update player coordinates, adjust map, and trigger different events depending on 
+// the type of ground walked onto.
 function movePlayer(direction) {
     if (playerState !== "locked") {
-        playerDirection = direction;
         playerState = "walking";
+        playerDirection = direction;
         if (!moving && checkPermittedMove(direction)) {
             //if not already moving and the next square is valid, move
             switch (direction) {
@@ -97,27 +99,25 @@ function movePlayer(direction) {
                     loadNewMapArea(squareType);
                 } else if (squareType === 0) {
                     walkingAnimation(direction);
-                } else if (squareType === 3) {
-                    // 3 = water
-                    // swimAnimation();
                 } else if (squareType === 4) {
                     walkingAnimation(direction);
                     if (Math.random() < 0.15) {
-                        changeMusic("route1", "wildPokemonFight", "movePlayer");
+                        changeMusic("route1", "wildPokemonFight");
+                        clearInterval(moveInterval);
                         playerState = "locked";
-                        $(document).trigger("mouseup");
                         walkingAnimation(direction);
                         setTimeout(function() { enterFightMode("wild"); }, 1000); 
                     }
                 } else if (squareType === 5) {
+                    // If walking over a ledge, move the player one square further
                     movePlayer(direction);
                 }
-            // (5 squares on screen above + offset by 1 buffer row) - playerY
-            var mapY = ((6 - playerY) * squareSize) + "vw";
-            // (5 squares on screen above + offset by 1 buffer col) - playerX  
+            // Reposition background as player moves
+            var mapY = ((6 - playerY) * squareSize) + "vw";  
             var mapX = ((6 - playerX) * squareSize) + "vw";
             $("#screen").css("top", mapY);
             $("#screen").css("left", mapX);
+            // Prevent movePlayer from executing again until the first move has finished
             moving = true;
             setTimeout(function() { moving = false }, 150)
         } else {
@@ -126,11 +126,12 @@ function movePlayer(direction) {
     }
 }
 
+// Helper function for movePlayer to make sure a move is permitted before allowing the player to 
+// enter the square.
 function checkPermittedMove(direction) {
     var targetSquare = null;
     mapWidth = mapLocations[currentLocation][0][1].length;
     mapHeight = mapLocations[currentLocation][0].length;
-    //THIS CHECKS WHETHER targetSquare IS A STRING 4X. REFACTOR.
     switch (direction) {
         case "up":
             // Make sure player isn't already at the top of the map, but let them move if 
@@ -193,6 +194,7 @@ function checkPermittedMove(direction) {
         // Square is taken by a claimable object
         return false;
     } else if (targetSquare.toString()[0] === "8") {
+        // Invisible barrier. Can't cross without a healthy pokemon.
         if (myPokemon === null) {
             showText("You'll need a pokemon to leave town. Find Professor Oak.");
             return false;
@@ -208,6 +210,48 @@ function checkPermittedMove(direction) {
     }
 }
 
+// Helper function for movePlayer to animate player sprite while walking.
+function walkingAnimation(direction) {
+    var spriteX = "";
+    var spriteY1 = "50%";
+    var spriteY2 = "100%";
+    direction = (direction) ? direction : playerDirection;
+    switch (direction) {
+        case "up":
+            spriteX = "33.333%";
+            break;
+        case "down":
+            spriteX = "0%";
+            break;
+        case "left":
+            spriteX = "66.666%";
+            break;
+        case "right":
+            spriteX = "100%";
+            break;
+        default:
+    };
+    if (playerState !== "walking") {
+        clearInterval(walkingAnimationInterval);
+        walkingAnimationInterval = null;
+        $("#player").css("background-position", spriteX + " 0%");
+        walkingSound.pause();
+    } else if (playerState === "walking" && walkingAnimationInterval === null) {
+        $("#player").css("background-position", spriteX + " 0%")
+        walkingAnimationInterval = setInterval(function() {
+            if(walkingSpriteToken === 0) {
+                $("#player").css("background-position", spriteX + " " + spriteY1);
+                walkingSpriteToken = 1;
+            } else {
+                $("#player").css("background-position", spriteX + " " + spriteY2);
+                walkingSpriteToken = 0;
+            }   
+        }, 150);
+        walkingSound.play();
+    } 
+}
+
+// Updates the background and relocates the player when changing maps.
 function loadNewMapArea(name) {
     var lastLocation = currentLocation;
     currentLocation = name;
@@ -218,6 +262,7 @@ function loadNewMapArea(name) {
     walkingAnimation(playerDirection);
     $("#player").hide();
     $("#screen").hide("clip");
+    // Set timeout to allow .hide() to animate
     setTimeout(function() {
         $("#screen").css("background-image", "url(img/" + name + ".png)");
         $("#screen").css("width", (mapWidth * squareSize) + "vw ");
@@ -230,8 +275,10 @@ function loadNewMapArea(name) {
         $("#screen").css("left", mapX);
         loadNPCsAndObjects(currentLocation);
         $("#screen").show("clip");
+        // Set timeout to allow map to load and position before showing player
         setTimeout(function() {
             $("#player").show();
+            // If player lost a battle, there will be text to clear before moving
             if ($("#text-box").css("display") === "none") {
                 playerState = "standing";
             } else {
@@ -241,6 +288,37 @@ function loadNewMapArea(name) {
     }, 450);
 }
 
+// Helper function for loadNewMapArea that adds NPCs and other objects to the map.
+function loadNPCsAndObjects(location) {
+    $(".npc").remove();
+    $(".claimableObject").remove();
+    if (allNPCs[location]) {
+        var currentNPCs = allNPCs[location];
+        currentNPCs.forEach(function(item) {
+            $("#screen").append("<div class='npc' id='" + item.name + "'></div>");
+            $("#" + item.name).css("background-image", "url(" + item.background + ")");
+            var npcPosY = ((item.location[0] - 1) * squareSize) + "vw";
+            var npcPosX = ((item.location[1] - 1) * squareSize) + "vw";
+            $("#" + item.name).css("top", npcPosY);
+            $("#" + item.name).css("left", npcPosX);
+        });
+    }
+    if (claimableObjects[location]) {
+        var currentClaimableObjects = claimableObjects[location];
+        currentClaimableObjects.forEach(function(item) {
+            if (item.status !== "claimed") {
+                $("#screen").append("<div class='claimableObject' id='" + item.name + "'></div>");
+                $("#" + item.name).css("background-image", "url(" + item.background + ")");
+                var itemPosY = ((item.location[0] - 1) * squareSize - 0.4) + "vw";
+                var itemPosX = ((item.location[1] - 1) * squareSize) + "vw";
+                $("#" + item.name).css("top", itemPosY);
+                $("#" + item.name).css("left", itemPosX);
+            }
+        });
+    }
+}
+
+// Function for changing the background music. Called when changing maps, entering/leaving fights, and when game ends.
 function changeMusic(lastLocation, newLocation) {
 
     function fadeSwitch(file){
@@ -295,80 +373,34 @@ function changeMusic(lastLocation, newLocation) {
     }
 }
 
-function loadNPCsAndObjects(location) {
-    $(".npc").remove();
-    $(".claimableObject").remove();
-    if (allNPCs[location]) {
-        var currentNPCs = allNPCs[location];
-        currentNPCs.forEach(function(item) {
-            $("#screen").append("<div class='npc' id='" + item.name + "'></div>");
-            $("#" + item.name).css("background-image", "url(" + item.background + ")");
-            var npcPosY = ((item.location[0] - 1) * squareSize) + "vw";
-            var npcPosX = ((item.location[1] - 1) * squareSize) + "vw";
-            $("#" + item.name).css("top", npcPosY);
-            $("#" + item.name).css("left", npcPosX);
-        });
-    }
-    if (claimableObjects[location]) {
-        var currentClaimableObjects = claimableObjects[location];
-        currentClaimableObjects.forEach(function(item) {
-            if (item.status === "unclaimed") {
-                $("#screen").append("<div class='claimableObject' id='" + item.name + "'></div>");
-                $("#" + item.name).css("background-image", "url(" + item.background + ")");
-                var itemPosY = ((item.location[0] - 1) * squareSize - 0.4) + "vw";
-                var itemPosX = ((item.location[1] - 1) * squareSize) + "vw";
-                $("#" + item.name).css("top", itemPosY);
-                $("#" + item.name).css("left", itemPosX);
-            }
-        });
+// Mutes or unmutes all audio objects.
+function muteUnmute() {
+    if(mute) {
+        $("#muteButton").css("background-image", "url(img/sound-allowed.png)");
+        mute = false;
+        localStorage.mute = false;
+        mapMusic.muted = false;
+        walkingSound.muted = false;
+        doorSound.muted = false;
+        menuSound.muted = false;
+        damageSound.muted = false;
+        defeatSound.muted = false;
+        explosionSound.muted = false;
+    } else {
+        $("#muteButton").css("background-image", "url(img/mute-icon.png)");
+        mute = true;
+        localStorage.mute = true;
+        mapMusic.muted = true;
+        walkingSound.muted = true;
+        doorSound.muted = true;
+        menuSound.muted = true;
+        damageSound.muted = true;
+        defeatSound.muted = true;
+        explosionSound.muted = true;
     }
 }
 
-function walkingAnimation(direction) {
-    var spriteX = "";
-    var spriteY1 = "50%";
-    var spriteY2 = "100%";
-    direction = (direction) ? direction : playerDirection;
-    switch (direction) {
-        case "up":
-            spriteX = "33.333%";
-            break;
-        case "down":
-            spriteX = "0%";
-            break;
-        case "left":
-            spriteX = "66.666%";
-            break;
-        case "right":
-            spriteX = "100%";
-            break;
-        default:
-    };
-    if (playerState !== "walking") {
-        clearInterval(walkingInterval);
-        walkingInterval = null;
-        $("#player").css("background-position", spriteX + " 0%");
-        walkingSound.pause();
-    } else if (playerState === "walking" && walkingInterval === null) {
-        $("#player").css("background-position", spriteX + " 0%")
-        walkingInterval = setInterval(function() {
-            if(token === 0) {
-                $("#player").css("background-position", spriteX + " " + spriteY1);
-                token = 1;
-            } else {
-                $("#player").css("background-position", spriteX + " " + spriteY2);
-                token = 0;
-            }   
-        }, 150);
-        walkingSound.play();
-    } 
-}
-
-function jumpAnimation(direction) {
-    //Placeholder function. Eventually will expand this.
-    console.log("Ashe jumped!");
-}
-
+// This function is called when you press the "A" button.
 function interactOrSelect() {
     var item = null;
     var targetSquare = null;
@@ -392,44 +424,48 @@ function interactOrSelect() {
         item = staticObjects[currentLocation][parseInt(targetSquare.toString()[1])];
         showText(item.text);
         playerState = "locked"
-        $(document).trigger("mouseup");
+        clearInterval(moveInterval);
         walkingAnimation(playerDirection);
     } else if (targetSquare.toString()[0] === "6") {
         // NPCs
         playerState = "locked"
-        $(document).trigger("mouseup");
+        clearInterval(moveInterval);
         walkingAnimation(playerDirection);
         item = allNPCs[currentLocation][parseInt(targetSquare.toString()[1])];
         if (item.healer && myPokemon.currentHP < myPokemon.maxHP) {
             myPokemon.currentHP = myPokemon.maxHP;
             showText(item.name + ": Here's some chocolate for your injured Pokemon. There you go, all better!");
         } else if (item.trainer) {
-            enemyTrainer = allNPCs[currentLocation][parseInt(targetSquare.toString()[1])];
-            showText(item.dialog);
+            enemyTrainer = item;
+            showText(enemyTrainer.dialog);
             var trainerType = (enemyTrainer.finalFour) ? "finalFourFight" : "normalTrainerFight";
-            changeMusic("", trainerType, "interactOrSelect");
+            changeMusic("", trainerType);
             $(document).off();
             setTimeout(function() { enterFightMode("trainer"); }, 1000);
         } else {
             showText(item.dialog);
         }
     } else if (targetSquare.toString()[0] === "7") {
-        // Claimable items
+        // Claimable items. Only pokemon at this point.
         var itemId = parseInt(targetSquare.toString()[1]);
         item = claimableObjects[currentLocation][itemId];
         if (item.status === "locked") {
             showText("You already took a Pokemon.");
         } else if (item.confirmText) {
+            // This item requires confirmation before being taken
             showText(item.confirmText);
             $("#confirm-box").show();
             $("#yes").attr("data-value", itemId);
             chooseMenuItem(document.getElementById("confirm-options").children, takeItem);
         } else {
-            takeItem(itemId); // no confirm needed, so pass the item ID to takeItem()
+            // No confirmation needed, so pass the item ID to takeItem()
+            takeItem(itemId); 
         }
     }
 }
 
+// Helper function for interactOrSelect to manipulate data and show appropriate messages/menus
+// when picking up an item.
 function takeItem(itemId) {
     var item = null;
     if (itemId !== "false") {
@@ -440,32 +476,35 @@ function takeItem(itemId) {
         } else {
             inventory.push(item);
         }
-        // Update item statuses in claimableObjects
+        // Once an item has been claimed, all other items in the map area get locked in claimableObjects. This should 
+        // really only happen for pokemon in Prof Oak's lab, but those are the only items in the game at the moment.
         claimableObjects[currentLocation].forEach(function(obj) {
             obj.status = "locked";
         });
-        // Remove item from the map & screen
+        claimableObjects[currentLocation][itemId].status = "claimed";
+        // Remove item from the mapLocations object & screen
         var itemY = item.location[0];
         var itemX = item.location[1];
         mapLocations[currentLocation][0][itemY][itemX] = 1;
         $("#" + item.name).remove();
         // If item required confirmation, restore game controls
         if (item.confirmText) {
-            $("#confirm-box").hide();
             cancelOrBack();
             setGameControls(); 
         }
     } else {
-        $("#confirm-box").hide();
         cancelOrBack();
         setGameControls();
     } 
 }
 
+// Spawns a random pokemon of the given ID, and adjusts level + stats depending on the owner and RNG.
+// Wild pokemon are always 2-3 levels weaker than your pokemon. Trainer pokemon are the same level or 
+// one higher.
 function instantiatePokemon(pokeId, owner) {
     var myNewPokemon = Object.assign({}, pokedex[pokeId]);
 
-    // Set random attack and defense bonuses
+    // Set random attack and defense bonuses to make each pokemon "unique"
     var attackBonus = Math.round(Math.random() * 3) - 1;
     myNewPokemon.attack += attackBonus;
     var defenseBonus = Math.round(Math.random() * 3) - 1;
@@ -491,18 +530,20 @@ function instantiatePokemon(pokeId, owner) {
     return myNewPokemon
 }
 
+// Function to show dialog or game messages.
 function showText(text) {
     playerState = "locked";
     $("#text").text(text);
     $("#text-box").show();
 }
 
+// Function to go back one step in a menu or layered screens of variable depth.
 function cancelOrBack() {
     if ($("#level-up-screen").css("display") !== "none") {
         $("#level-up-screen").hide();
         menuSound.play();
         return;
-    } else if ($("#battle-screen").css("display") !== "none") {
+    } else if ($("#battle-screen").css("display") !== "none" && !inFight) {
         $("#battle-screen").hide();
         menuSound.play();
     } else if ($("#text-box").css("display") !== "none") {
@@ -513,6 +554,7 @@ function cancelOrBack() {
     }
 }
 
+// Generalized function for managing menu options and passing the selected value to a callback function.
 function chooseMenuItem(options, callback) {
     var selectedOption = 0;
     
@@ -557,18 +599,23 @@ function chooseMenuItem(options, callback) {
                 break;
             case "a-button":
             case 75:
-                //"k" button -> A. Return data-value of item with the "selectedOption" class.
-                $(document).off();
-                callback(options[selectedOption].getAttribute("data-value"));
-                menuSound.play();
+                //"k" button -> A. Return data-value of the selected option.
+                var value = options[selectedOption].getAttribute("data-value");
+                if (value !== "--") {
+                    $(document).off();
+                    callback(value);
+                    menuSound.play();
+                }
                 break;
             case "b-button":
             case 76:
                 //"l" button -> B
-                $(document).off();
-                cancelOrBack();
-                setGameControls();
-                menuSound.play();
+                if(!inFight) {
+                    $(document).off();
+                    cancelOrBack();
+                    setGameControls();
+                    menuSound.play();
+                }
                 break;
             default:
         };
@@ -580,12 +627,9 @@ function chooseMenuItem(options, callback) {
     $(document).on("mousedown", eventHandler);
 }
 
-function buttonPress(button) {
-    //Test function
-    console.log(button, "was pressed");
-}
-
+// Performs DOM manipulation to show fight screen w/ friendly and enemy pokemon's data.
 function enterFightMode(enemyType) {
+    inFight = true;
     // Generate a random Pokemon
     var pokemonIndex = 0;
     if (enemyType === "wild") {
@@ -595,9 +639,9 @@ function enterFightMode(enemyType) {
     }
     ranPokemon = instantiatePokemon(pokemonIndex, enemyType);
 
-
+    // Load stats + images for both pokemon into DOM
     $("#enemy-pokemon-name").text(ranPokemon.name.toUpperCase());
-    $("#enemy-pokemon-health-bar").css("width", "8.1vw"); //this is a magic number
+    $("#enemy-pokemon-health-bar").css("width", "8.1vw");
     $("#enemy-pokemon-level").text(ranPokemon.level);
     $("#enemy-pokemon-image").hide();
     $("#enemy-pokemon-image").attr("src", ranPokemon.frontImage);
@@ -718,10 +762,13 @@ function takeTurn(moveIndex) {
     }
 }
 
+// Performs DOM manipulation to show pokemon loss, grants experience when fight was won, takes player back to 
+// Pallet Town when defeated.
 function pokemonDefeated(defeatedPokemon, playerWonBool) {
     $("#battle-options").hide();
     $("#battle-text").show();
     $("#battle-text").text(defeatedPokemon.name + " has fainted!");
+    inFight = false;
     if (playerWonBool) {
         $("#enemy-pokemon-image").hide("explode");
         if (enemyTrainer) {
@@ -755,9 +802,9 @@ function pokemonDefeated(defeatedPokemon, playerWonBool) {
                     // triggering cancelOrBack to clear the trainer's loss message. This time,
                     // enemyTrainer will be null, so controls get reset.
                 } else {
+                    playerState = "standing"
                     $(document).off(); // Just do this at the beginning of setGameControls?
                     setGameControls();
-                    playerState = "standing"
                 } 
             } else {
                 loadNewMapArea("pallet");
@@ -774,6 +821,8 @@ function pokemonDefeated(defeatedPokemon, playerWonBool) {
     $(document).on("mousedown", eventHandler);
 }
 
+// Increases Pokemon's stats and resets "experience bar" when pokemon levels up. Also performs DOM 
+// manipulation to show "level up screen."
 function levelUp(){
     myPokemon.level++;
     myPokemon.currentExp = 0;
@@ -800,13 +849,8 @@ function levelUp(){
     $(document).on("mousedown", eventHandler);
 }
 
-function startMenu() {
-    // This is a placeholder function. Will eventually replace.
-    console.log("This button opens the start menu");
-}
-
+// Sets event listeners to allow game control through keyboard arrows, w/a/s/d, or HTML controls.
 function setGameControls() {
-    var moveInterval = null;
 
     function eventHandler(event) {
         
@@ -857,12 +901,12 @@ function setGameControls() {
             case "select":
             case 71:
                 // select, keyboard "g" button
-                buttonPress("select");
+                console.log("The select button was pressed");
                 break;
             case "start":
             case 72:
                 // start, keyboard "h" button
-                startMenu("start");
+                console.log("The start button was pressed");
                 break;
             default:
         };          
@@ -888,6 +932,7 @@ function setGameControls() {
     });
 }
 
+// Checks to see whether all four trainers in the Final Four have been defeated.
 function checkWin() {
     var defeatedBosses = allNPCs["finalFourLair"].filter(function(item) {
         if (item.defeated) {
@@ -902,37 +947,6 @@ function checkWin() {
         return false;
     }
 }
-
-function muteUnmute() {
-    if(mute) {
-        $("#muteButton").css("background-image", "url(img/sound-allowed.png)");
-        mute = false;
-        localStorage.mute = false;
-        mapMusic.muted = false;
-        walkingSound.muted = false;
-        doorSound.muted = false;
-        menuSound.muted = false;
-        damageSound.muted = false;
-        defeatSound.muted = false;
-        explosionSound.muted = false;
-    } else {
-        $("#muteButton").css("background-image", "url(img/mute-icon.png)");
-        mute = true;
-        localStorage.mute = true;
-        mapMusic.muted = true;
-        walkingSound.muted = true;
-        doorSound.muted = true;
-        menuSound.muted = true;
-        damageSound.muted = true;
-        defeatSound.muted = true;
-        explosionSound.muted = true;
-    }
-}
-
-// function npcWander() {
-//     var walkOrStay = Math.random();
-//     var 
-// }
 
 
 
