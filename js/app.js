@@ -560,6 +560,11 @@ function chooseMenuItem(options, callback) {
     // Generalized event handler that can work with keydown or mousedown/click events
     function eventHandler(event) {
         var token = event.keyCode ? event.keyCode : event.target.id;
+
+        if(event.keyCode && [32, 37, 38, 39, 40].indexOf(event.keyCode) > -1) {
+            event.preventDefault();
+        }
+
         switch (token) {
             case "d-pad-up":
             case 38:
@@ -661,6 +666,11 @@ function enterFightMode(enemyType) {
     $("#enemy-pokemon-image").show("slide", { direction : "right", distance : 300 }, 800);
     $(document).off();
     $(document).on("keydown", function(event) {
+        // Keep arrows from moving page around
+        if(event.keyCode && [32, 37, 38, 39, 40].indexOf(event.keyCode) > -1) {
+            event.preventDefault();
+        }
+
         if (event.keyCode === 65 || event.keyCode === 75) {
             turn = 0;
             takeTurn();
@@ -841,6 +851,11 @@ function levelUp(){
 function setGameControls() {
 
     function eventHandler(event) {
+
+        // Prevent arrows from moving the page around
+        if(event.keyCode && [32, 37, 38, 39, 40].indexOf(event.keyCode) > -1) {
+            event.preventDefault();
+        }
         
         var token = event.keyCode ? event.keyCode : event.target.id;
         switch (token) {
