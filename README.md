@@ -9,6 +9,7 @@ For this project I used the following technologies:
 * JSON
 * jQuery
 * jQuery UI
+* Python
 
 Notably, I did *not* use HTML5 canvas, opting to rely on jQuery UI and CSS transitions for animation.
 
