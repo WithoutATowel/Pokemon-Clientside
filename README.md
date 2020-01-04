@@ -1,5 +1,8 @@
 # WDI-Project-1: Pokemon
 
+## Running locally
+
+
 ## Technologies Used 
 For this project I used the following technologies:
 * HTML

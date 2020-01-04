@@ -43,8 +43,8 @@ var enemyTrainer = null;
 var turn = 0;
 
 // Define music objects and set volumes
-var mapMusic = new Audio("music/pallet.mp3");;
-var walkingSound = new Audio("music/footsteps.mp3")
+var mapMusic = new Audio("music/pallet.mp3");
+var walkingSound = new Audio("music/footsteps.mp3");
 var doorSound = new Audio("music/door.wav");
 var menuSound = new Audio("music/menu-move.wav");
 var damageSound = new Audio("music/damage.wav");
