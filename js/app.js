@@ -1,18 +1,38 @@
+// $(document).ready(function() {
+//     // Load data as global variables
+//     $.getJSON("data/NPCsAndObjects.json").done(function(data) {
+//         staticObjects = data.staticObjects;
+//         claimableObjects = data.claimableObjects;
+//         allNPCs = data.allNPCs;
+//         loadNPCsAndObjects(currentLocation);
+//     });
+//     $.getJSON("data/maps.json").done(function(data) {
+//         mapLocations = data.mapLocations;
+//     });
+//     $.getJSON("data/pokedex.json").done(function(data) {
+//         pokedex = data.pokedex;
+//         pokeMoves = data.pokeMoves;
+//     });
+//     setGameControls();
+//     $("#muteButton").on("click", muteUnmute);
+
+//     //muteUnmute function assumes button has just been clicked, so swap retrieved "mute" value
+//     mute = (localStorage.mute === "true") ? false : true;
+//     muteUnmute();
+//     mapMusic.play();
+// });
+
 $(document).ready(function() {
-    // Load data as global variables
-    $.getJSON("data/NPCsAndObjects.json").done(function(data) {
-        staticObjects = data.staticObjects;
-        claimableObjects = data.claimableObjects;
-        allNPCs = data.allNPCs;
-        loadNPCsAndObjects(currentLocation);
-    });
-    $.getJSON("data/maps.json").done(function(data) {
-        mapLocations = data.mapLocations;
-    });
-    $.getJSON("data/pokedex.json").done(function(data) {
-        pokedex = data.pokedex;
-        pokeMoves = data.pokeMoves;
-    });
+    // Load JSON from data.js
+    mapLocations = maps.mapLocations;
+    staticObjects = NPCsAndObjects.staticObjects;
+    claimableObjects = NPCsAndObjects.claimableObjects;
+    allNPCs = NPCsAndObjects.allNPCs;
+    pokedex = pokemon.pokedex;
+    pokeMoves = pokemon.pokeMoves;
+
+    // Initialize map
+    loadNPCsAndObjects(currentLocation);
     setGameControls();
     $("#muteButton").on("click", muteUnmute);
 
